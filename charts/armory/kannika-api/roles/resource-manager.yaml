@@ -1,0 +1,49 @@
+# This Role is not used by the Helm chart, except for the `rules` field!
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+rules:
+  # Manage Kannika resources
+  - apiGroups:
+      - kannika.io
+    resources:
+      - backups
+      - restores
+      - storages
+      - credentials
+      - eventhubs
+      - schemaregistries
+      - schemaregistrybackups
+      - schemaregistryrestores
+    verbs:
+      - create
+      - get
+      - list
+      - watch
+      - update
+      - patch
+      - delete
+      - deletecollection
+
+  # Manage Credentials secrets
+  - apiGroups: [""]
+    resources:
+      - secrets
+      - configmaps
+    verbs:
+      - create
+      - get
+      - list
+      - watch
+      - update
+      - patch
+      - delete
+      - deletecollection
+
+  - apiGroups: [""]
+    resources:
+      - serviceaccounts
+      - pods
+    verbs:
+      - get
+      - list
+      - watch

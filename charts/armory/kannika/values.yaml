@@ -1,0 +1,22 @@
+console:
+  enabled: true
+
+api:
+  enabled: true
+  config:
+    operatorService:
+      name: operator
+      enabled: true
+
+operator:
+  enabled: true
+  config:
+    eventGateway:
+      enabled: true
+
+global:
+  imagePullSecrets: []
+  kubernetes:
+    # Specifies which namespace to use for the resources (backups, etc.).
+    # This is preferably a separate namespace from the installation namespace.
+    namespace: ""

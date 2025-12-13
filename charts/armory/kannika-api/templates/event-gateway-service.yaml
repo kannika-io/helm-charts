@@ -1,0 +1,24 @@
+{{- if .Values.eventGateway.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.eventGateway.service.name }}
+{{- with .Values.eventGateway.service.annotations }}
+  annotations:
+  {{- toYaml . | nindent 4 }}
+{{- end }}
+  labels:
+{{ include "kannika-api.labels" . | indent 4 }}
+{{ if .Values.eventGateway.service.labels -}}
+{{ toYaml .Values.eventGateway.service.labels | indent 4 }}
+{{- end }}
+spec:
+  ports:
+    - name: "http"
+      port: {{ .Values.eventGateway.service.port }}
+      targetPort: {{ .Values.eventGateway.service.targetPort }}
+  type: {{ .Values.service.type }}
+  selector:
+    app.kubernetes.io/name: {{ include "kannika-api.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}

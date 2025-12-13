@@ -1,0 +1,252 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "kannika-operator.name" . }}
+  labels:
+    {{- include "kannika-operator.labels" . | nindent 4 }}
+data:
+  config.yaml: |-
+    namespaces:
+      data: {{ include "kannika-operator.kubernetesNamespace" . | quote }}
+      system: {{ .Release.Namespace | quote }}
+    backup:
+      {{- if .Values.config.eventGateway.enabled }}
+      metricsPushEndpoint: {{ include "kannika-operator.eventGatewayServiceUrl" . | quote }}
+      {{- end }}
+      image:
+        repository: {{ .Values.config.coreImage.repository | quote }}
+        tag: {{ .Values.config.coreImage.tag | quote }}
+        pullPolicy: {{ .Values.config.coreImage.pullPolicy | quote }}
+      {{- $backupPodFields := dict }}
+      {{- if .Values.config.backup.pod.imagePullSecrets }}
+      {{- $_ := set $backupPodFields "imagePullSecrets" .Values.config.backup.pod.imagePullSecrets }}
+      {{- end }}
+      {{- if .Values.config.backup.pod.tolerations }}
+      {{- $_ := set $backupPodFields "tolerations" .Values.config.backup.pod.tolerations }}
+      {{- end }}
+      {{- if .Values.config.backup.pod.resources }}
+      {{- $_ := set $backupPodFields "resources" .Values.config.backup.pod.resources }}
+      {{- end }}
+      {{- if .Values.config.backup.pod.affinity }}
+      {{- $_ := set $backupPodFields "affinity" .Values.config.backup.pod.affinity }}
+      {{- end }}
+      {{- if .Values.config.backup.pod.nodeSelector }}
+      {{- $_ := set $backupPodFields "nodeSelector" .Values.config.backup.pod.nodeSelector }}
+      {{- end }}
+      {{- if .Values.config.backup.pod.serviceAccountName }}
+      {{- $_ := set $backupPodFields "serviceAccountName" .Values.config.backup.pod.serviceAccountName | quote }}
+      {{- end }}
+      {{- if .Values.config.backup.pod.securityContext }}
+      {{- $_ := set $backupPodFields "securityContext" .Values.config.backup.pod.securityContext  }}
+      {{- end }}
+      {{- $backupPodContainerFields := dict}}
+      {{- if .Values.config.backup.pod.container.securityContext }}
+      {{- $_ := set $backupPodContainerFields "securityContext" .Values.config.backup.pod.container.securityContext }}
+      {{- end }}
+      {{- if .Values.config.backup.pod.container.readinessProbe }}
+      {{- $_ := set $backupPodContainerFields "readinessProbe" .Values.config.backup.pod.container.readinessProbe }}
+      {{- end }}
+      {{- if .Values.config.backup.pod.container.livenessProbe }}
+      {{- $_ := set $backupPodContainerFields "livenessProbe" .Values.config.backup.pod.container.livenessProbe }}
+      {{- end }}
+      {{- if .Values.config.backup.pod.container.startupProbe }}
+      {{- $_ := set $backupPodContainerFields "startupProbe" .Values.config.backup.pod.container.startupProbe }}
+      {{- end }}
+      {{- if $backupPodContainerFields }}
+      {{- $_ := set $backupPodFields "container" $backupPodContainerFields }}
+      {{- end }}
+
+      {{- if $backupPodFields }}
+      pod:
+      {{- toYaml $backupPodFields | nindent 8 }}
+      {{- end }}
+
+    restore:
+      {{- if .Values.config.eventGateway.enabled }}
+      metricsPushEndpoint: {{ include "kannika-operator.eventGatewayServiceUrl" . | quote }}
+      {{- end }}
+      image:
+        repository: {{ .Values.config.coreImage.repository | quote }}
+        tag: {{ .Values.config.coreImage.tag | quote }}
+        pullPolicy: {{ .Values.config.coreImage.pullPolicy | quote }}
+    {{- $restorePodFields := dict }}
+    {{- if .Values.config.restore.pod.imagePullSecrets }}
+    {{- $_ := set $restorePodFields "imagePullSecrets" .Values.config.restore.pod.imagePullSecrets }}
+    {{- end }}
+    {{- if .Values.config.restore.pod.tolerations }}
+    {{- $_ := set $restorePodFields "tolerations" .Values.config.restore.pod.tolerations }}
+    {{- end }}
+    {{- if .Values.config.restore.pod.resources }}
+    {{- $_ := set $restorePodFields "resources" .Values.config.restore.pod.resources  }}
+    {{- end }}
+    {{- if .Values.config.restore.pod.affinity }}
+    {{- $_ := set $restorePodFields "affinity" .Values.config.restore.pod.affinity }}
+    {{- end }}
+    {{- if .Values.config.restore.pod.nodeSelector }}
+    {{- $_ := set $restorePodFields "nodeSelector" .Values.config.restore.pod.nodeSelector }}
+    {{- end }}
+    {{- if .Values.config.restore.pod.serviceAccountName }}
+    {{- $_ := set $restorePodFields "serviceAccountName" .Values.config.restore.pod.serviceAccountName | quote }}
+    {{- end }}
+    {{- if .Values.config.restore.pod.securityContext }}
+    {{- $_ := set $restorePodFields "securityContext" .Values.config.restore.pod.securityContext }}
+    {{- end }}
+    {{- $restorePodContainerFields := dict}}
+    {{- if .Values.config.restore.pod.container.securityContext }}
+    {{- $_ := set $restorePodContainerFields "securityContext" .Values.config.restore.pod.container.securityContext }}
+    {{- end }}
+    {{- if .Values.config.restore.pod.container.readinessProbe }}
+    {{- $_ := set $restorePodContainerFields "readinessProbe" .Values.config.restore.pod.container.readinessProbe }}
+    {{- end }}
+    {{- if .Values.config.restore.pod.container.livenessProbe }}
+    {{- $_ := set $restorePodContainerFields "livenessProbe" .Values.config.restore.pod.container.livenessProbe }}
+    {{- end }}
+    {{- if .Values.config.restore.pod.container.startupProbe }}
+    {{- $_ := set $restorePodContainerFields "startupProbe" .Values.config.restore.pod.container.startupProbe }}
+    {{- end }}
+    {{- if $restorePodContainerFields }}
+    {{- $_ := set $restorePodFields "container" $restorePodContainerFields }}
+    {{- end }}
+    {{- if $restorePodFields }}
+      pod:
+    {{- toYaml $restorePodFields | nindent 8 }}
+    {{- end }}
+
+    schemaRegistryBackup:
+      {{- if .Values.config.eventGateway.enabled }}
+      metricsPushEndpoint: {{ include "kannika-operator.eventGatewayServiceUrl" . | quote }}
+      {{- end }}
+      image:
+        repository: {{ .Values.config.schemaRegistryImage.repository | quote }}
+        tag: {{ .Values.config.schemaRegistryImage.tag | quote }}
+        pullPolicy: {{ .Values.config.schemaRegistryImage.pullPolicy | quote }}
+    {{- $schemaRegistryBackupPodFields := dict }}
+    {{- if .Values.config.schemaRegistryBackup.pod.imagePullSecrets }}
+    {{- $_ := set $schemaRegistryBackupPodFields "imagePullSecrets" .Values.config.schemaRegistryBackup.pod.imagePullSecrets }}
+    {{- end }}
+    {{- if .Values.config.schemaRegistryBackup.pod.tolerations }}
+    {{- $_ := set $schemaRegistryBackupPodFields "tolerations" .Values.config.schemaRegistryBackup.pod.tolerations }}
+    {{- end }}
+    {{- if .Values.config.schemaRegistryBackup.pod.resources }}
+    {{- $_ := set $schemaRegistryBackupPodFields "resources" .Values.config.schemaRegistryBackup.pod.resources  }}
+    {{- end }}
+    {{- if .Values.config.schemaRegistryBackup.pod.affinity }}
+    {{- $_ := set $schemaRegistryBackupPodFields "affinity" .Values.config.schemaRegistryBackup.pod.affinity }}
+    {{- end }}
+    {{- if .Values.config.schemaRegistryBackup.pod.nodeSelector }}
+    {{- $_ := set $schemaRegistryBackupPodFields "nodeSelector" .Values.config.schemaRegistryBackup.pod.nodeSelector }}
+    {{- end }}
+    {{- if .Values.config.schemaRegistryBackup.pod.serviceAccountName }}
+    {{- $_ := set $schemaRegistryBackupPodFields "serviceAccountName" .Values.config.schemaRegistryBackup.pod.serviceAccountName | quote }}
+    {{- end }}
+    {{- if .Values.config.schemaRegistryBackup.pod.securityContext }}
+    {{- $_ := set $schemaRegistryBackupPodFields "securityContext" .Values.config.schemaRegistryBackup.pod.securityContext }}
+    {{- end }}
+    {{- $schemaRegistryBackupPodContainerFields := dict}}
+    {{- if .Values.config.schemaRegistryBackup.pod.container.securityContext }}
+    {{- $_ := set $schemaRegistryBackupPodContainerFields "securityContext" .Values.config.schemaRegistryBackup.pod.container.securityContext }}
+    {{- end }}
+    {{- if .Values.config.schemaRegistryBackup.pod.container.readinessProbe }}
+    {{- $_ := set $schemaRegistryBackupPodContainerFields "readinessProbe" .Values.config.schemaRegistryBackup.pod.container.readinessProbe }}
+    {{- end }}
+    {{- if .Values.config.schemaRegistryBackup.pod.container.livenessProbe }}
+    {{- $_ := set $schemaRegistryBackupPodContainerFields "livenessProbe" .Values.config.schemaRegistryBackup.pod.container.livenessProbe }}
+    {{- end }}
+    {{- if .Values.config.schemaRegistryBackup.pod.container.startupProbe }}
+    {{- $_ := set $schemaRegistryBackupPodContainerFields "startupProbe" .Values.config.schemaRegistryBackup.pod.container.startupProbe }}
+    {{- end }}
+    {{- if $schemaRegistryBackupPodContainerFields }}
+    {{- $_ := set $schemaRegistryBackupPodFields "container" $schemaRegistryBackupPodContainerFields }}
+    {{- end }}
+    {{- if $schemaRegistryBackupPodFields }}
+      pod:
+    {{- toYaml $schemaRegistryBackupPodFields | nindent 8 }}
+    {{- end }}
+
+    schemaRegistryRestore:
+      {{- if .Values.config.eventGateway.enabled }}
+      metricsPushEndpoint: {{ include "kannika-operator.eventGatewayServiceUrl" . | quote }}
+      {{- end }}
+      image:
+        repository: {{ .Values.config.schemaRegistryImage.repository | quote }}
+        tag: {{ .Values.config.schemaRegistryImage.tag | quote }}
+        pullPolicy: {{ .Values.config.schemaRegistryImage.pullPolicy | quote }}
+    {{- $schemaRegistryRestorePodFields := dict }}
+    {{- if .Values.config.schemaRegistryRestore.pod.imagePullSecrets }}
+    {{- $_ := set $schemaRegistryRestorePodFields "imagePullSecrets" .Values.config.schemaRegistryRestore.pod.imagePullSecrets }}
+    {{- end }}
+    {{- if .Values.config.schemaRegistryRestore.pod.tolerations }}
+    {{- $_ := set $schemaRegistryRestorePodFields "tolerations" .Values.config.schemaRegistryRestore.pod.tolerations }}
+    {{- end }}
+    {{- if .Values.config.schemaRegistryRestore.pod.resources }}
+    {{- $_ := set $schemaRegistryRestorePodFields "resources" .Values.config.schemaRegistryRestore.pod.resources  }}
+    {{- end }}
+    {{- if .Values.config.schemaRegistryRestore.pod.affinity }}
+    {{- $_ := set $schemaRegistryRestorePodFields "affinity" .Values.config.schemaRegistryRestore.pod.affinity }}
+    {{- end }}
+    {{- if .Values.config.schemaRegistryRestore.pod.nodeSelector }}
+    {{- $_ := set $schemaRegistryRestorePodFields "nodeSelector" .Values.config.schemaRegistryRestore.pod.nodeSelector }}
+    {{- end }}
+    {{- if .Values.config.schemaRegistryRestore.pod.serviceAccountName }}
+    {{- $_ := set $schemaRegistryRestorePodFields "serviceAccountName" .Values.config.schemaRegistryRestore.pod.serviceAccountName | quote }}
+    {{- end }}
+    {{- if .Values.config.schemaRegistryRestore.pod.securityContext }}
+    {{- $_ := set $schemaRegistryRestorePodFields "securityContext" .Values.config.schemaRegistryRestore.pod.securityContext }}
+    {{- end }}
+    {{- $schemaRegistryRestorePodContainerFields := dict}}
+    {{- if .Values.config.schemaRegistryRestore.pod.container.securityContext }}
+    {{- $_ := set $schemaRegistryRestorePodContainerFields "securityContext" .Values.config.schemaRegistryRestore.pod.container.securityContext }}
+    {{- end }}
+    {{- if .Values.config.schemaRegistryRestore.pod.container.readinessProbe }}
+    {{- $_ := set $schemaRegistryRestorePodContainerFields "readinessProbe" .Values.config.schemaRegistryRestore.pod.container.readinessProbe }}
+    {{- end }}
+    {{- if .Values.config.schemaRegistryRestore.pod.container.livenessProbe }}
+    {{- $_ := set $schemaRegistryRestorePodContainerFields "livenessProbe" .Values.config.schemaRegistryRestore.pod.container.livenessProbe }}
+    {{- end }}
+    {{- if .Values.config.schemaRegistryRestore.pod.container.startupProbe }}
+    {{- $_ := set $schemaRegistryRestorePodContainerFields "startupProbe" .Values.config.schemaRegistryRestore.pod.container.startupProbe }}
+    {{- end }}
+    {{- if $schemaRegistryRestorePodContainerFields }}
+    {{- $_ := set $schemaRegistryRestorePodFields "container" $schemaRegistryRestorePodContainerFields }}
+    {{- end }}
+    {{- if $schemaRegistryRestorePodFields }}
+      pod:
+    {{- toYaml $schemaRegistryRestorePodFields | nindent 8 }}
+    {{- end }}
+
+    {{- $podFields := dict }}
+    {{- if .Values.config.pod.imagePullSecrets -}}
+    {{- $_ := set $podFields "imagePullSecrets" .Values.config.pod.imagePullSecrets -}}
+    {{- else if .Values.imagePullSecrets -}}
+    {{- $_ := set $podFields "imagePullSecrets" .Values.imagePullSecrets}}
+    {{- else if .Values.global.imagePullSecrets -}}
+    {{- $_ := set $podFields "imagePullSecrets" .Values.global.imagePullSecrets }}
+    {{- end -}}
+    {{- if .Values.config.pod.tolerations }}
+    {{- $_ := set $podFields "tolerations" .Values.config.pod.tolerations }}
+    {{- end }}
+    {{- if .Values.config.pod.resources }}
+    {{- $_ := set $podFields "resources" .Values.config.pod.resources }}
+    {{- end }}
+    {{- if .Values.config.pod.affinity }}
+    {{- $_ := set $podFields "affinity" .Values.config.pod.affinity }}
+    {{- end }}
+    {{- if .Values.config.pod.nodeSelector }}
+    {{- $_ := set $podFields "nodeSelector" .Values.config.pod.nodeSelector }}
+    {{- end }}
+    {{- if .Values.config.pod.serviceAccountName }}
+    {{- $_ := set $podFields "serviceAccountName" .Values.config.pod.serviceAccountName | quote }}
+    {{- end }}
+    {{- if .Values.config.pod.securityContext }}
+    {{- $_ := set $podFields "securityContext" .Values.config.pod.securityContext }}
+    {{- end }}
+    {{- if .Values.config.pod.container.securityContext }}
+    {{- $_ := set $podFields "container" (dict "securityContext" .Values.config.pod.container.securityContext) }}
+    {{- end }}
+
+
+    {{- if $podFields }}
+
+    pod:
+      {{- toYaml $podFields | nindent 6 }}
+    {{- end }}

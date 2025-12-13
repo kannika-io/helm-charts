@@ -1,0 +1,93 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kannika-api.name" . }}
+  labels:
+    {{- include "kannika-api.labels" . | nindent 4 }}
+spec:
+  replicas: {{ include "kannika-api.replicaCount" . }}
+  selector:
+    matchLabels:
+      {{- include "kannika-api.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "kannika-api.selectorLabels" . | nindent 8 }}
+    spec:
+      {{ $imagePullSecrets := include "kannika-api.imagePullSecrets" . }}
+      {{- with $imagePullSecrets }}
+      imagePullSecrets:
+        {{- . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "kannika-api.serviceAccount" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - mountPath: /tmp # Allows writing to /tmp folder when readOnlyRootFilesystem is true
+              name: tmp-volume
+            - mountPath: {{ include "kannika-api.dataDirectory" .  }}
+              name: kannika-data-volume
+            {{- with .Values.volumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          env:
+            - name: KANNIKA_VERSION
+              value: {{ .Chart.AppVersion | quote }}
+            {{- with .Values.extraEnv }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "kannika-api.name" . }}
+            - secretRef:
+                name: {{ include "kannika-api.name" . }}
+          readinessProbe:
+            httpGet:
+              path: "/health/readiness"
+              port: 8081
+              scheme: "HTTP"
+            initialDelaySeconds: 5
+            periodSeconds: 1
+            timeoutSeconds: 10
+            failureThreshold: 30
+
+          livenessProbe:
+            httpGet:
+              path: "/health/liveness"
+              port: 8081
+              scheme: "HTTP"
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 10
+
+      volumes:
+        - name: tmp-volume
+          emptyDir: {}
+        {{- include "kannika-api.deploymentDataVolume" . | nindent 8 -}}
+        {{- with .Values.volumes }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

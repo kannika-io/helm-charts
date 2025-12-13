@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "kannika-console.name" . }}
+data:
+  {{- if .Values.config.apiUrl }}
+  API_URL: {{.Values.config.apiUrl | quote}}
+  {{- end }}
+  {{- if .Values.config.security.enabled }}
+  SECURITY_ENABLED: "true"
+  {{- if .Values.config.security.userInactivityTimeoutSeconds }}
+  USER_INACTIVITY_TIMEOUT_SECONDS: {{.Values.config.security.userInactivityTimeoutSeconds | quote}}
+  {{- end }}
+  {{- if .Values.config.security.oidc.enabled }}
+  {{- if .Values.config.security.oidc.clientId }}
+  OIDC_CLIENT_ID: {{.Values.config.security.oidc.clientId | quote }}
+  {{- end }}
+  {{- if .Values.config.security.oidc.audience }}
+  OIDC_AUDIENCE: {{.Values.config.security.oidc.audience | quote }}
+  {{- end }}
+  {{- if .Values.config.security.oidc.scope }}
+  OIDC_SCOPE: {{.Values.config.security.oidc.scope | quote }}
+  {{- end }}
+  {{- if .Values.config.security.oidc.authEndpoint }}
+  OIDC_AUTH_ENDPOINT: {{.Values.config.security.oidc.authEndpoint | quote}}
+  {{- end }}
+  {{- if .Values.config.security.oidc.tokenEndpoint }}
+  OIDC_TOKEN_ENDPOINT: {{.Values.config.security.oidc.tokenEndpoint | quote}}
+  {{- end }}
+  {{- if .Values.config.security.oidc.logoutEndpoint }}
+  OIDC_LOGOUT_ENDPOINT: {{.Values.config.security.oidc.logoutEndpoint | quote}}
+  {{- end }}
+  {{- if .Values.config.security.oidc.displayNameTokenClaim }}
+  OIDC_DISPLAY_NAME_TOKEN_CLAIM: {{.Values.config.security.oidc.displayNameTokenClaim | quote}}
+  {{- end }}
+  {{- end }}
+  {{- else }}
+  SECURITY_ENABLED: "false"
+  {{- end }}

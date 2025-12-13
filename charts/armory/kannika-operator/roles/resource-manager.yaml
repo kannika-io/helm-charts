@@ -1,0 +1,126 @@
+# This Role is not used by the Helm chart, except for the `rules` field!
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+rules:
+# Watch Pods created by Deployments and StatefulSets
+- apiGroups: [ "" ]
+  resources:
+    - pods
+  verbs:
+    - watch
+    - list
+
+# Deploy and manage Deployments/StatefulSets created by Kannika resources
+- apiGroups: [ "apps" ]
+  resources:
+    - deployments
+    - statefulsets
+  verbs:
+    - create
+    - get
+    - watch
+    - list
+    - update
+    - patch
+    - delete
+    - deletecollection
+
+- apiGroups: [ "" ]
+  resources:
+    - configmaps
+    - persistentvolumeclaims
+  verbs:
+    - create
+    - get
+    - watch
+    - list
+    - update
+    - patch
+    - delete
+    - deletecollection
+
+# Deploy and manage jobs to run Kannika resources
+- apiGroups: [ "batch" ]
+  resources:
+    - jobs
+    - job/status
+  verbs:
+    - create
+    - get
+    - watch
+    - list
+    - update
+    - patch
+    - delete
+    - deletecollection
+
+- apiGroups: [ "" ]
+  resources:
+    - configmaps
+    - persistentvolumeclaims
+    - jobs
+  verbs:
+    - create
+    - get
+    - watch
+    - list
+    - update
+    - patch
+    - delete
+    - deletecollection
+
+# Read Credentials values
+- apiGroups: [ "" ]
+  resources:
+    - secrets
+  verbs:
+    - get
+    - list
+    - watch
+
+# Get status of Deployments/StatefulSets
+- apiGroups: [ "apps" ]
+  resources:
+    - deployments/status
+    - statefulsets/status
+  verbs:
+    - get
+
+# Detect and install storage classes
+- apiGroups:
+    - storage.k8s.io
+  resources:
+    - storageclasses
+  verbs:
+    - get
+    - list
+    - create
+    - update
+    - patch
+
+# Manage Kannika Armory resources
+- apiGroups:
+    - kannika.io
+  resources:
+    - backups
+    - backups/status
+    - restores
+    - restores/status
+    - storages
+    - storages/status
+    - credentials
+    - credentials/status
+    - eventhubs
+    - eventhubs/status
+    - schemaregistries
+    - schemaregistries/status
+    - schemaregistrybackups
+    - schemaregistrybackups/status
+    - schemaregistryrestores
+    - schemaregistryrestores/status
+  verbs:
+    - get
+    - list
+    - watch
+    - update
+    - patch

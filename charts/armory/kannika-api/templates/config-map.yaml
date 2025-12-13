@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "kannika-api.name" . }}
+data:
+  {{- $ns := (include "kannika-api.kubernetesNamespace" .) -}}
+  {{- if $ns }}
+  KANNIKA_K8S_NAMESPACE: {{ $ns | quote }}
+  {{- end }}
+  KANNIKA_DATA_DIRECTORY: {{ include "kannika-api.dataDirectory" . }}
+  KANNIKA_SECURITY_ENABLED: {{ .Values.config.security.enabled | quote }}
+  {{- if .Values.config.security.enabled }}
+  {{- if .Values.config.security.oidc.issuerUri }}
+  KANNIKA_SECURITY_OIDC_ISSUER_URI: {{ .Values.config.security.oidc.issuerUri | quote }}
+  {{- end }}
+  {{- if .Values.config.security.oidc.audience }}
+  KANNIKA_SECURITY_OIDC_AUDIENCE: {{ .Values.config.security.oidc.audience | quote }}
+  {{- end }}
+  {{- if .Values.config.security.oidc.principalClaimName }}
+  KANNIKA_SECURITY_OIDC_PRINCIPAL_CLAIM_NAME: {{ .Values.config.security.oidc.principalClaimName | quote }}
+  {{- end }}
+  {{- end }}
+  {{- if .Values.config.operatorService.enabled }}
+  KANNIKA_OPERATOR_SERVICE_URL: {{ include "kannika-api.operatorServiceUrl" . }}
+  {{- end -}}
+  {{- if .Values.service.targetPort }}
+  KANNIKA_SERVER_PORT: {{ .Values.service.targetPort | quote }}
+  {{- end }}

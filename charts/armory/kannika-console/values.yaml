@@ -1,0 +1,98 @@
+image:
+  repository: quay.io/kannika/kannika-console
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "0.12.4"
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+replicaCount: 1
+
+# The values below are used in the Kubernetes Service
+service:
+  enabled: true
+  port: 8080
+  type: ClusterIP
+  targetPort: 8080
+  annotations: {}
+  labels: {}
+podAnnotations: {}
+podSecurityContext: {}
+# fsGroup: 2000
+
+securityContext: {}
+#  capabilities:
+#    drop:
+#      - ALL
+#  readOnlyRootFilesystem: true
+#  runAsNonRoot: true
+#  runAsUser: 1001011234
+#  allowPrivilegeEscalation: false
+#  seccompProfile:
+#    type: RuntimeDefault
+resources: {}
+# limits:
+#   cpu: 100m
+#   memory: 128Mi
+# requests:
+#   cpu: 100m
+#   memory: 128Mi
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+volumes: []
+volumeMounts: []
+configMaps: {}
+global:
+  imagePullSecrets: []
+extraEnv: []
+
+config:
+  # The base URL of the API server.
+  # The console will use this URL to make requests to the API server.
+  # It will automatically append "/gql" to the base URL to access the GraphQL API.
+  apiUrl: ""
+
+  security:
+    # Set to false to disable security
+    enabled: true
+
+    # The timeout in seconds for user inactivity.
+    # If the user is inactive for this duration, the user will be logged out.
+    # If the value is empty, the user inactivity timeout feature will be disabled.
+    # Default value is 900 seconds (15 minutes).
+    userInactivityTimeoutSeconds: "900"
+
+    # Configuration options for OIDC authentication.
+    oidc:
+      # If enabled is true, OIDC authentication will be enabled.
+      enabled: false
+
+      # The OIDC client ID.
+      clientId: ""
+
+      # The authorization endpoint.
+      # This is used to initiate the authorization code flow.
+      # The authorization endpoint must support the response_type "code".
+      authEndpoint: ""
+
+      # The token endpoint.
+      # This is used to exchange the authorization code for an access token.
+      tokenEndpoint: ""
+
+      # The endpoint to redirect to the OIDC provider for logout.
+      logoutEndpoint: ""
+
+      # The audience for the access token.
+      # This is used to validate the access token in the API.
+      # If the value is empty, the audience will not be validated.
+      audience: ""
+
+      # The additional scopes to request when requesting an access token
+      scope: ""
+
+      # The name of the claim in the access token that contains the user's name
+      # It will be used to show the name in the console
+      displayNameTokenClaim: ""

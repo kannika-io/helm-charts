@@ -1,0 +1,24 @@
+{{- if .Values.service.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "kannika-operator.name" . }}
+{{- with .Values.service.annotations }}
+  annotations:
+  {{- toYaml . | nindent 4 }}
+{{- end }}
+  labels:
+{{ include "kannika-operator.labels" . | indent 4 }}
+{{ if .Values.service.labels -}}
+{{ toYaml .Values.service.labels | indent 4 }}
+{{- end }}
+spec:
+  ports:
+  - name: "http"
+    port: {{ .Values.service.port }}
+    targetPort: {{ .Values.service.targetPort }}
+  type: {{ .Values.service.type }}
+  selector:
+    app.kubernetes.io/name: {{ include "kannika-operator.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}

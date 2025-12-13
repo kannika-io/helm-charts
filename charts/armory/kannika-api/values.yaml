@@ -1,0 +1,135 @@
+image:
+  repository: quay.io/kannika/kannika-api
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "0.12.4"
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+# The amount of replicas to deploy
+# The API server is not designed to be scaled horizontally, so it can only be set to 0 or 1
+replicaCount: 1
+# The values below are used in the Kubernetes Service
+service:
+  enabled: true
+  type: ClusterIP
+  port: 8080 # port that the service will expose
+  targetPort: 8080 # container port
+  annotations: {}
+  labels: {}
+# The values below are used in the Kubernetes Service for the Event Gateway
+# The Event Gateway is a separate service of the API that is used to ingest events from other components
+eventGateway:
+  enabled: true
+  service:
+    name: "event-gateway"
+    type: ClusterIP
+    port: 8082 # port that the service will expose
+    targetPort: 8082 # container port
+    annotations: {}
+    labels: {}
+# Persistence settings for the API server's data directory.
+# The data directory is configured by the application setting `config.data.directory` (default: /var/lib/kannika).
+# By default, an emptyDir volume is used, which is deleted when the pod is deleted.
+# If you want to use a PersistentVolumeClaim, set `persistentVolume.enabled` to true.
+# If you want to use a hostPath, set `storage.hostPath` to the path on the host.
+storage:
+  # Store data on the host using this absolute path.
+  # This is useful for development and testing, but not recommended for production.
+  hostPath: ""
+  # Store data using a PersistentVolumeClaim.
+  persistentVolume:
+    # Whether to use a PersistentVolumeClaim to store data.
+    # Enabling this will take precedence over the other settings.
+    enabled: false
+    # The size of the PersistentVolumeClaim.
+    size: 5Gi
+    # The storage class to use for the PersistentVolumeClaim.
+    # If not set, the default storage class will be used.
+    storageClass: ""
+    labels: {}
+    annotations: {}
+    accessModes:
+      - ReadWriteOnce
+    # Used to overwrite the default name of the PersistentVolumeClaim
+    nameOverwrite: ""
+# Application settings
+config:
+  kubernetes:
+    # This will be removed in 0.13. Use `global.kubernetes.namespace` instead.
+    namespace: ""
+
+  security:
+    enabled: true
+    username: "kannika"
+    password: "kannika"
+    oidc:
+      issuerUri: ""
+      audience: ""
+      principalClaimName: ""
+  # The Service to call for information about the operator
+  operatorService:
+    # Whether the API should call the Service
+    enabled: false
+    # The name of the Service to call
+    name: kannika-operator
+    # The namespace of the Service to call
+    namespace: ""
+    # The port of the Service to call
+    port: 8080
+  data:
+    # Directory where the API server stores cached data
+    # Defaults to /var/lib/kannika
+    directory: "/var/lib/kannika"
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the name template
+  name: ""
+  clusterRbac:
+    # Specifies whether cluster-wide RBAC resources should be created for this service account
+    create: false
+  rbac:
+    # Specifies whether namespaced RBAC resources should be created for this service account
+    create: true
+podAnnotations: {}
+podSecurityContext: {}
+# fsGroup: 2000
+
+securityContext: {}
+#  capabilities:
+#    drop:
+#      - ALL
+#  readOnlyRootFilesystem: true
+#  runAsNonRoot: true
+#  runAsUser: 1001011234
+#  allowPrivilegeEscalation: false
+#  seccompProfile:
+#    type: RuntimeDefault
+
+resources: {}
+# limits:
+#   cpu: 100m
+#   memory: 128Mi
+# requests:
+#   cpu: 100m
+#   memory: 128Mi
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+volumes:
+volumeMounts: []
+configMaps: {}
+global:
+  imagePullSecrets: []
+  kubernetes:
+    # Namespace where the Kannika Armory resources live (e.g. kannika-data).
+    # If not set, the `default` namespace will be used.
+    # NOTE: This is **not** the namespace where the Kannika Armory components are installed (e.g. kannika-system).
+    namespace: ""
+extraEnv: []

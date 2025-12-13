@@ -1,0 +1,13 @@
+{{- if .Values.serviceAccount.create }}
+{{- if .Values.serviceAccount.rbac.create }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "kannika-operator.name" . }}:resource-manager
+  namespace: {{ include "kannika-operator.kubernetesNamespace" . }}
+  labels:
+{{ include "kannika-operator.labels" . | indent 4 }}
+rules:
+{{ include "kannika-operator.rules" (list $ "resource-manager") | indent 2 }}
+{{- end }}
+{{- end }}

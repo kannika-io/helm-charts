@@ -1,0 +1,12 @@
+# This Role is not used by the Helm chart, except for the `rules` field!
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+rules:
+# Watch and read the Kannika Armory license from a Secret
+- apiGroups: [ "" ]
+  resources:
+    - secrets
+  verbs:
+    - get
+    - list
+    - watch

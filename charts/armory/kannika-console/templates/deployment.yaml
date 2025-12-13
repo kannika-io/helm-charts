@@ -1,0 +1,107 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kannika-console.name" . }}
+  labels:
+    {{- include "kannika-console.labels" . | nindent 4 }}
+spec:
+  replicas: {{ include "kannika-console.replicaCount" . }}
+  selector:
+    matchLabels:
+      {{- include "kannika-console.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "kannika-console.selectorLabels" . | nindent 8 }}
+    spec:
+      {{ $imagePullSecrets := include "kannika-console.imagePullSecrets" . }}
+      {{- with $imagePullSecrets }}
+      imagePullSecrets:
+        {{- . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - mountPath: /tmp # Allows writing to /tmp folder when readOnlyRootFilesystem is true
+              name: tmp-volume
+            - mountPath: /var/cache/nginx # Allows writing to /var/cache/nginx folder when readOnlyRootFilesystem is true
+              name: var-cache-nginx-volume
+            - mountPath: /var/run # Allows writing to /var/run folder when readOnlyRootFilesystem is true
+              name: var-run-volume
+            - mountPath: /var/log/nginx # Allows writing to /var/log/nginx folder when readOnlyRootFilesystem is true
+              name: var-log-nginx-volume
+            - mountPath: /run/nginx # Allows writing to /run/nginx folder when readOnlyRootFilesystem is true
+              name: run-nginx-volume
+            - mountPath: /usr/share/nginx/html/config # Allows writing config.json to /usr/share/nginx/html/config/config.json when readOnlyRootFilesystem is true
+              name: config-volume
+            {{- with .Values.volumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          env:
+            - name: KANNIKA_VERSION
+              value: {{ .Chart.AppVersion | quote }}
+          {{- with .Values.extraEnv }}
+          {{- toYaml . | nindent 12 }}
+          {{- end }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "kannika-console.name" . }}
+          readinessProbe:
+            httpGet:
+              path: "/"
+              port: 8080
+              scheme: "HTTP"
+            initialDelaySeconds: 5
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 30
+
+          livenessProbe:
+            httpGet:
+              path: "/"
+              port: 8080
+              scheme: "HTTP"
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 10
+
+      volumes:
+        - name: tmp-volume
+          emptyDir: {}
+        - name: var-cache-nginx-volume
+          emptyDir: {}
+        - name: var-run-volume
+          emptyDir: {}
+        - name: var-log-nginx-volume
+          emptyDir: {}
+        - name: run-nginx-volume
+          emptyDir: {}
+        - name: config-volume
+          emptyDir: {}
+        {{- with .Values.volumes }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

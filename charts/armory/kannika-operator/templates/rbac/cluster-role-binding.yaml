@@ -1,0 +1,18 @@
+{{- if .Values.serviceAccount.clusterRbac.create }}
+{{- if .Values.serviceAccount.create }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "kannika-operator.name" . }}
+  labels:
+{{ include "kannika-operator.labels" . | indent 4 }}
+subjects:
+  - kind: ServiceAccount
+    namespace: {{ .Release.Namespace }}
+    name: {{ include "kannika-operator.serviceAccount" . }}
+roleRef:
+  kind: ClusterRole
+  name: {{ include "kannika-operator.name" . }}
+  apiGroup: rbac.authorization.k8s.io
+{{- end }}
+{{- end }}

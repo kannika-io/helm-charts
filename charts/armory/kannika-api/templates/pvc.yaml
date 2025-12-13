@@ -1,0 +1,23 @@
+{{- if .Values.storage.persistentVolume.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "kannika-api.dataPvcName" . }}
+  {{- with .Values.storage.persistentVolume.labels }}
+  labels:
+    {{- toYaml . | nindent 4 -}}
+  {{- end }}
+  {{- with .Values.storage.persistentVolume.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 -}}
+  {{- end }}
+spec:
+  {{- with .Values.storage.persistentVolume.accessModes }}
+  accessModes:
+     {{- toYaml . | nindent 4 }}
+   {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.storage.persistentVolume.size }}
+  storageClassName: {{ .Values.storage.persistentVolume.storageClass | default "default" | quote }}
+{{- end }}

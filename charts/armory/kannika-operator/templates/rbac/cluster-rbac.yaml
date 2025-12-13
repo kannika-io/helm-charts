@@ -1,0 +1,13 @@
+{{- if .Values.serviceAccount.clusterRbac.create }}
+{{- if .Values.serviceAccount.create }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "kannika-operator.name" . }}
+  labels:
+{{ include "kannika-operator.labels" . | indent 4 }}
+rules:
+{{ include "kannika-operator.rules" (list $ "resource-manager") | indent 2 }}
+{{ include "kannika-operator.rules" (list $ "license-reader") | indent 2 }}
+{{- end }}
+{{- end }}

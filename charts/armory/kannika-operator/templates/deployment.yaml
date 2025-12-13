@@ -1,0 +1,99 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kannika-operator.name" . }}
+  labels:
+    {{- include "kannika-operator.labels" . | nindent 4 }}
+spec:
+  replicas: {{ include "kannika-operator.replicaCount" . }}
+  selector:
+    matchLabels:
+      {{- include "kannika-operator.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "kannika-operator.selectorLabels" . | nindent 8 }}
+    spec:
+      {{ $imagePullSecrets := include "kannika-operator.imagePullSecrets" . }}
+      {{- with $imagePullSecrets }}
+      imagePullSecrets:
+        {{- . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "kannika-operator.serviceAccount" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - mountPath: /tmp # Allows writing to /tmp folder when readOnlyRootFilesystem is true
+              name: tmp-volume
+            - mountPath: /etc/kannika
+              name: kannika-operator-config
+            {{- with .Values.volumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          env:
+            - name: KANNIKA_VERSION
+              value: {{ .Chart.AppVersion | quote }}
+            {{- if .Values.config.storage.class }}
+            - name: KANNIKA_STORAGE_CLASS
+              value: {{ .Values.config.storage.class | quote }}
+            {{- end }}
+            {{- if .Values.config.logging.format }}
+            - name: KANNIKA_LOGGING_FORMAT
+              value: {{ .Values.config.logging.format | quote }}
+            {{- end }}
+            {{- with .Values.extraEnv }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          readinessProbe:
+            httpGet:
+              path: "/health"
+              port: 8080
+              scheme: "HTTP"
+            initialDelaySeconds: 1
+            periodSeconds: 1
+            timeoutSeconds: 10
+            failureThreshold: 60
+
+          livenessProbe:
+            httpGet:
+              path: "/health"
+              port: 8080
+              scheme: "HTTP"
+            initialDelaySeconds: 10
+            periodSeconds: 60
+            timeoutSeconds: 10
+            failureThreshold: 5
+
+      volumes:
+        - name: tmp-volume
+          emptyDir: {}
+        - name: kannika-operator-config
+          configMap:
+            name: {{ include "kannika-operator.name" . }}
+        {{- with .Values.volumes }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
