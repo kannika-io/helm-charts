@@ -17,6 +17,9 @@ on:
 jobs:
   merge-values:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # Required to push the new branch
+      pull-requests: write # Required to create the actual PR
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
