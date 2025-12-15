@@ -7,10 +7,10 @@ on:
     - cron: "0 0 * * 0"
   push:
     paths:
-      - "charts/kannika/values.yaml"
-      - "charts/kannika-api/values.yaml"
-      - "charts/kannika-console/values.yaml"
-      - "charts/kannika-operator/values.yaml"
+      - "charts/armory/kannika/values.yaml"
+      - "charts/armory/kannika-api/values.yaml"
+      - "charts/armory/kannika-console/values.yaml"
+      - "charts/armory/kannika-operator/values.yaml"
       - "scripts/merge-values.sh"
       - ".github/workflows/merge-values.yaml"
 
@@ -28,9 +28,8 @@ jobs:
 
       - name: Merge Armory values
         run: |
-          cd charts/kannika
-          chmod +x ../../scripts/merge-values.sh
-          ../../scripts/merge-values.sh \
+          chmod +x ./scripts/merge-values.sh
+          ./scripts/merge-values.sh \
             ./charts/armory/kannika \
             ./charts/armory/kannika-api \
             ./charts/armory/kannika-console \
