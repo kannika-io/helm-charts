@@ -12,4 +12,4 @@ This repository contains merged `values.yaml` files for umbrella charts for easy
 
 | Product | Values |
 |---------|--------|
-| Kannika Armory | ./charts/armory/values.yaml |
+| Kannika Armory | [/charts/armory/values.yaml](/charts/armory/values.yaml) |
