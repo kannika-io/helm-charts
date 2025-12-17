@@ -1,12 +1,13 @@
 # This file is auto-generated. Do not edit manually.
 
+
 # Values for api subchart
 api:
   image:
     repository: quay.io/kannika/kannika-api
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
-    tag: "0.12.4"
+    tag: "0.13.0"
   imagePullSecrets: []
   nameOverride: ""
   fullnameOverride: ""
@@ -66,6 +67,16 @@ api:
       enabled: true
       username: "kannika"
       password: "kannika"
+      # Secret configuration:
+      # - `create`: when true the chart creates the Secret (default: true for backwards compatibility).
+      # - `name`: optional name to use for the created Secret. If empty, the chart uses the release resource name.
+      # - `usernameKey` / `passwordKey`: keys used inside the Secret (defaults preserve current keys).
+      secret:
+        create: true
+        name: ""
+        usernameKey: "username"
+        passwordKey: "password"
+        namespace: ""
       oidc:
         issuerUri: ""
         audience: ""
@@ -101,7 +112,7 @@ api:
   podAnnotations: {}
   podSecurityContext: {}
   # fsGroup: 2000
-
+  
   securityContext: {}
   #  capabilities:
   #    drop:
@@ -112,7 +123,7 @@ api:
   #  allowPrivilegeEscalation: false
   #  seccompProfile:
   #    type: RuntimeDefault
-
+  
   resources: {}
   # limits:
   #   cpu: 100m
@@ -120,7 +131,7 @@ api:
   # requests:
   #   cpu: 100m
   #   memory: 128Mi
-
+  
   nodeSelector: {}
   tolerations: []
   affinity: {}
@@ -135,7 +146,7 @@ operator:
     repository: quay.io/kannika/kannika-operator
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
-    tag: "0.12.4"
+    tag: "0.13.0"
   imagePullSecrets: []
   nameOverride: ""
   fullnameOverride: ""
@@ -157,7 +168,7 @@ operator:
     coreImage:
       repository: quay.io/kannika/kannika-core
       pullPolicy: IfNotPresent
-      tag: "0.12.4"
+      tag: "0.13.0"
     logging:
       # The format of the logs.
       # Can be "json" or "text".
@@ -188,7 +199,7 @@ operator:
       #      limits:
       #        memory: "1Gi"
       #        cpu: "1000m"
-
+  
       # Default security context for pods spawned by the operator
       # See https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
       securityContext: {}
@@ -218,7 +229,7 @@ operator:
         #        allowPrivilegeEscalation: false
         #        seccompProfile:
         #          type: RuntimeDefault
-
+  
         # Override the default readiness probe of the Restore pod
         # See https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
         readinessProbe: {}
@@ -242,7 +253,7 @@ operator:
         #      limits:
         #        memory: "1Gi"
         #        cpu: "1000m"
-
+  
         # Default security context for Backup pods
         # This takes precedence over the `.config.pod.securityContext` setting.
         # See https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
@@ -278,7 +289,7 @@ operator:
           #        allowPrivilegeEscalation: false
           #        seccompProfile:
           #          type: RuntimeDefault
-
+  
           # Override the default readiness probe of the Backup pod
           # See https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
           readinessProbe: {}
@@ -302,7 +313,7 @@ operator:
         #      limits:
         #        memory: "1Gi"
         #        cpu: "1000m"
-
+  
         # Default security context for Restore pods
         # This takes precedence over the `.config.pod.securityContext` setting.
         # See https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
@@ -338,7 +349,7 @@ operator:
           #        allowPrivilegeEscalation: false
           #        seccompProfile:
           #          type: RuntimeDefault
-
+  
           # Override the default readiness probe of the Restore pod
           # See https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
           readinessProbe: {}
@@ -353,7 +364,7 @@ operator:
     schemaRegistryImage:
       repository: quay.io/kannika/kannika-registry-backup
       pullPolicy: IfNotPresent
-      tag: "0.12.4"
+      tag: "0.13.0"
     schemaRegistryBackup:
       pod:
         # Service account to use for each SchemaRegistryBackup pod
@@ -368,7 +379,7 @@ operator:
         #      limits:
         #        memory: "1Gi"
         #        cpu: "1000m"
-
+  
         # Default security context for SchemaRegistryBackup pods
         # This takes precedence over the `.config.pod.securityContext` setting.
         # See https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
@@ -404,7 +415,7 @@ operator:
           #        allowPrivilegeEscalation: false
           #        seccompProfile:
           #          type: RuntimeDefault
-
+  
           # Override the default readiness probe of the SchemaRegistryBackup pod
           # See https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
           readinessProbe: {}
@@ -428,7 +439,7 @@ operator:
         #      limits:
         #        memory: "1Gi"
         #        cpu: "1000m"
-
+  
         # Default security context for SchemaRegistryRestore pods
         # This takes precedence over the `.config.pod.securityContext` setting.
         # See https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
@@ -464,7 +475,7 @@ operator:
           #        allowPrivilegeEscalation: false
           #        seccompProfile:
           #          type: RuntimeDefault
-
+  
           # Override the default readiness probe of the SchemaRegistryRestore pod
           # See https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
           readinessProbe: {}
@@ -492,7 +503,7 @@ operator:
   # Security context for the operator pod
   podSecurityContext: {}
   # fsGroup: 2000
-
+  
   securityContext: {}
   #  capabilities:
   #    drop:
@@ -510,7 +521,7 @@ operator:
   # requests:
   #   cpu: 100m
   #   memory: 128Mi
-
+  
   nodeSelector: {}
   tolerations: []
   affinity: {}
@@ -525,7 +536,7 @@ console:
     repository: quay.io/kannika/kannika-console
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
-    tag: "0.12.4"
+    tag: "0.13.0"
   imagePullSecrets: []
   nameOverride: ""
   fullnameOverride: ""
@@ -541,7 +552,7 @@ console:
   podAnnotations: {}
   podSecurityContext: {}
   # fsGroup: 2000
-
+  
   securityContext: {}
   #  capabilities:
   #    drop:
@@ -559,7 +570,7 @@ console:
   # requests:
   #   cpu: 100m
   #   memory: 128Mi
-
+  
   nodeSelector: {}
   tolerations: []
   affinity: {}

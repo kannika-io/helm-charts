@@ -48,10 +48,9 @@ spec:
             {{- with .Values.extraEnv }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
+            {{- include "kannika-api.basicAuthEnvVars" . | nindent 12 }}
           envFrom:
             - configMapRef:
-                name: {{ include "kannika-api.name" . }}
-            - secretRef:
                 name: {{ include "kannika-api.name" . }}
           readinessProbe:
             httpGet:
