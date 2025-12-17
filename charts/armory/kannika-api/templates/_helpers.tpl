@@ -180,3 +180,34 @@ Minimum 0 and maximum 1.
   {{- toYaml $rules -}}
 {{- end -}}
 
+{{- define "kannika-api.basicAuthEnvVars" -}}
+{{- if .Values.config.security.enabled }}
+  {{- $secretName := .Values.config.security.secret.name | default (include "kannika-api.name" $) -}}
+  {{- $secretNamespace := .Values.config.security.secret.namespace | default .Release.Namespace -}}
+  {{- $userKey := .Values.config.security.secret.usernameKey | default "username" -}}
+  {{- $passKey := .Values.config.security.secret.passwordKey | default "password" -}}
+  {{- if or .Values.config.security.secret.create .Values.config.security.secret.name }}
+- name: KANNIKA_SECURITY_BASIC_AUTH_USERNAME
+  valueFrom:
+    secretKeyRef:
+      name: {{ $secretName }}
+      namespace: {{ $secretNamespace }}
+      key: {{ $userKey }}
+- name: KANNIKA_SECURITY_BASIC_AUTH_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: {{ $secretName }}
+      namespace: {{ $secretNamespace }}
+      key: {{ $passKey }}
+  {{- else }}
+    {{- if .Values.config.security.username }}
+- name: KANNIKA_SECURITY_BASIC_AUTH_USERNAME
+  value: {{ .Values.config.security.username | quote }}
+    {{- end }}
+    {{- if .Values.config.security.password }}
+- name: KANNIKA_SECURITY_BASIC_AUTH_PASSWORD
+  value: {{ .Values.config.security.password | quote }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+{{- end -}}
