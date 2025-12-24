@@ -494,6 +494,12 @@ spec:
                         type: array
                     type: object
                 type: object
+              annotations:
+                additionalProperties:
+                  type: string
+                description: 'Map of string keys and values that can be used to annotate objects. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/'
+                nullable: true
+                type: object
               compression:
                 description: Compression options for the backup By default, no compression is used Note that enabling compression will only compress new data, not existing data
                 nullable: true
@@ -618,6 +624,12 @@ spec:
                       type: string
                   type: object
                 type: array
+              labels:
+                additionalProperties:
+                  type: string
+                description: 'Map of string keys and values that can be used to organize and categorize (scope and select) objects. All labels are propagated to all the child resources. More info: http://kubernetes.io/docs/user-guide/labels'
+                nullable: true
+                type: object
               monitoring:
                 description: Container specs for the monitoring container
                 nullable: true
@@ -1523,6 +1535,12 @@ spec:
                         type: array
                     type: object
                 type: object
+              annotations:
+                additionalProperties:
+                  type: string
+                description: 'Map of string keys and values that can be used to annotate objects. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/'
+                nullable: true
+                type: object
               config:
                 default: {}
                 description: The configuration for the restore operation.
@@ -1835,6 +1853,12 @@ spec:
                       type: string
                   type: object
                 type: array
+              labels:
+                additionalProperties:
+                  type: string
+                description: 'Map of string keys and values that can be used to organize and categorize (scope and select) objects. All labels are propagated to all the child resources. More info: http://kubernetes.io/docs/user-guide/labels'
+                nullable: true
+                type: object
               nodeSelector:
                 additionalProperties:
                   type: string
@@ -2110,14 +2134,27 @@ spec:
                 - region
                 type: object
               volume:
+                description: Common spec for all Kannika resources
                 properties:
+                  annotations:
+                    additionalProperties:
+                      type: string
+                    description: 'Map of string keys and values that can be used to annotate objects. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/'
+                    nullable: true
+                    type: object
                   capacity:
                     description: The volume's capacity
                     type: string
                   description:
-                    description: Optional description
+                    description: A description for the task. This is used for informational purposes only.
                     nullable: true
                     type: string
+                  labels:
+                    additionalProperties:
+                      type: string
+                    description: 'Map of string keys and values that can be used to organize and categorize (scope and select) objects. All labels are propagated to all the child resources. More info: http://kubernetes.io/docs/user-guide/labels'
+                    nullable: true
+                    type: object
                   storageClass:
                     description: Storage class
                     nullable: true
@@ -2221,10 +2258,22 @@ spec:
               kafka:
                 description: Kafka-like event brokers (kafka, redpanda, ...)
                 properties:
+                  annotations:
+                    additionalProperties:
+                      type: string
+                    description: 'Map of string keys and values that can be used to annotate objects. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/'
+                    nullable: true
+                    type: object
                   description:
-                    description: Optional description
+                    description: A description for the task. This is used for informational purposes only.
                     nullable: true
                     type: string
+                  labels:
+                    additionalProperties:
+                      type: string
+                    description: 'Map of string keys and values that can be used to organize and categorize (scope and select) objects. All labels are propagated to all the child resources. More info: http://kubernetes.io/docs/user-guide/labels'
+                    nullable: true
+                    type: object
                   properties:
                     additionalProperties:
                       type: string
@@ -3328,6 +3377,12 @@ spec:
                         type: array
                     type: object
                 type: object
+              annotations:
+                additionalProperties:
+                  type: string
+                description: 'Map of string keys and values that can be used to annotate objects. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/'
+                nullable: true
+                type: object
               backupIntervalSecs:
                 default: 3600
                 description: Interval between backups in seconds.
@@ -3435,6 +3490,12 @@ spec:
                       type: string
                   type: object
                 type: array
+              labels:
+                additionalProperties:
+                  type: string
+                description: 'Map of string keys and values that can be used to organize and categorize (scope and select) objects. All labels are propagated to all the child resources. More info: http://kubernetes.io/docs/user-guide/labels'
+                nullable: true
+                type: object
               nodeSelector:
                 additionalProperties:
                   type: string
@@ -4075,6 +4136,12 @@ spec:
                         type: array
                     type: object
                 type: object
+              annotations:
+                additionalProperties:
+                  type: string
+                description: 'Map of string keys and values that can be used to annotate objects. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/'
+                nullable: true
+                type: object
               description:
                 description: A description for the task. This is used for informational purposes only.
                 nullable: true
@@ -4180,6 +4247,12 @@ spec:
                 default: false
                 description: Enable import mode to restore the original schema IDs and versions
                 type: boolean
+              labels:
+                additionalProperties:
+                  type: string
+                description: 'Map of string keys and values that can be used to organize and categorize (scope and select) objects. All labels are propagated to all the child resources. More info: http://kubernetes.io/docs/user-guide/labels'
+                nullable: true
+                type: object
               nodeSelector:
                 additionalProperties:
                   type: string
