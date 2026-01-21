@@ -47,6 +47,7 @@ jobs:
         if: steps.git-check.outputs.changed == 'true'
         uses: peter-evans/create-pull-request@v6
         with:
+          base: main
           commit-message: "chore: update merged values.yaml from subcharts"
           title: "Update merged values.yaml"
           body: |
