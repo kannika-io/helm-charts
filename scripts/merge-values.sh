@@ -74,7 +74,8 @@ for chart_path in "$@"; do
     echo "${chart_key}:"
 
     # Indent the values, but extract global section separately
-    yq eval 'del(.global)' "$values_file" | sed 's/^/  /'
+    # Use sort_keys to ensure deterministic output order
+    yq eval 'del(.global) | sort_keys(..)' "$values_file" | sed 's/^/  /'
 
     # Collect global values if they exist
     global_values=$(yq eval '.global' "$values_file" 2>/dev/null)
@@ -90,5 +91,5 @@ if [ -n "$global_sections" ]; then
     echo ""
     echo "# Global values shared across all subcharts"
     echo "global:"
-    echo "$global_sections" | yq eval-all '. as $item ireduce ({}; . * $item)' - | sed 's/^/  /'
+    echo "$global_sections" | yq eval-all '. as $item ireduce ({}; . * $item) | sort_keys(..)' - | sed 's/^/  /'
 fi
