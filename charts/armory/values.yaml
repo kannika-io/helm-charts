@@ -3,84 +3,16 @@
 
 # Values for api subchart
 api:
-  image:
-    repository: quay.io/kannika/kannika-api
-    pullPolicy: IfNotPresent
-    # Overrides the image tag whose default is the chart appVersion.
-    tag: "0.13.0"
-  imagePullSecrets: []
-  nameOverride: ""
-  fullnameOverride: ""
-  # The amount of replicas to deploy
-  # The API server is not designed to be scaled horizontally, so it can only be set to 0 or 1
-  replicaCount: 1
-  # The values below are used in the Kubernetes Service
-  service:
-    enabled: true
-    type: ClusterIP
-    port: 8080 # port that the service will expose
-    targetPort: 8080 # container port
-    annotations: {}
-    labels: {}
-  # The values below are used in the Kubernetes Service for the Event Gateway
-  # The Event Gateway is a separate service of the API that is used to ingest events from other components
-  eventGateway:
-    enabled: true
-    service:
-      name: "event-gateway"
-      type: ClusterIP
-      port: 8082 # port that the service will expose
-      targetPort: 8082 # container port
-      annotations: {}
-      labels: {}
-  # Persistence settings for the API server's data directory.
-  # The data directory is configured by the application setting `config.data.directory` (default: /var/lib/kannika).
-  # By default, an emptyDir volume is used, which is deleted when the pod is deleted.
-  # If you want to use a PersistentVolumeClaim, set `persistentVolume.enabled` to true.
-  # If you want to use a hostPath, set `storage.hostPath` to the path on the host.
-  storage:
-    # Store data on the host using this absolute path.
-    # This is useful for development and testing, but not recommended for production.
-    hostPath: ""
-    # Store data using a PersistentVolumeClaim.
-    persistentVolume:
-      # Whether to use a PersistentVolumeClaim to store data.
-      # Enabling this will take precedence over the other settings.
-      enabled: false
-      # The size of the PersistentVolumeClaim.
-      size: 5Gi
-      # The storage class to use for the PersistentVolumeClaim.
-      # If not set, the default storage class will be used.
-      storageClass: ""
-      labels: {}
-      annotations: {}
-      accessModes:
-        - ReadWriteOnce
-      # Used to overwrite the default name of the PersistentVolumeClaim
-      nameOverwrite: ""
+  affinity: {}
   # Application settings
   config:
+    data:
+      # Directory where the API server stores cached data
+      # Defaults to /var/lib/kannika
+      directory: "/var/lib/kannika"
     kubernetes:
       # This will be removed in 0.13. Use `global.kubernetes.namespace` instead.
       namespace: ""
-    security:
-      enabled: true
-      username: "kannika"
-      password: "kannika"
-      # Secret configuration:
-      # - `create`: when true the chart creates the Secret (default: true for backwards compatibility).
-      # - `name`: optional name to use for the created Secret. If empty, the chart uses the release resource name.
-      # - `usernameKey` / `passwordKey`: keys used inside the Secret (defaults preserve current keys).
-      secret:
-        create: true
-        name: ""
-        usernameKey: "username"
-        passwordKey: "password"
-        namespace: ""
-      oidc:
-        issuerUri: ""
-        audience: ""
-        principalClaimName: ""
     # The Service to call for information about the operator
     operatorService:
       # Whether the API should call the Service
@@ -91,27 +23,59 @@ api:
       namespace: ""
       # The port of the Service to call
       port: 8080
-    data:
-      # Directory where the API server stores cached data
-      # Defaults to /var/lib/kannika
-      directory: "/var/lib/kannika"
-  serviceAccount:
-    # Specifies whether a service account should be created
-    create: true
-    # Annotations to add to the service account
-    annotations: {}
-    # The name of the service account to use.
-    # If not set and create is true, a name is generated using the name template
-    name: ""
-    clusterRbac:
-      # Specifies whether cluster-wide RBAC resources should be created for this service account
-      create: false
-    rbac:
-      # Specifies whether namespaced RBAC resources should be created for this service account
-      create: true
+    security:
+      enabled: true
+      oidc:
+        audience: ""
+        issuerUri: ""
+        principalClaimName: ""
+      password: "kannika"
+      # Secret configuration:
+      # - `create`: when true the chart creates the Secret (default: true for backwards compatibility).
+      # - `name`: optional name to use for the created Secret. If empty, the chart uses the release resource name.
+      # - `usernameKey` / `passwordKey`: keys used inside the Secret (defaults preserve current keys).
+      secret:
+        create: true
+        name: ""
+        passwordKey: "password"
+        usernameKey: "username"
+      username: "kannika"
+  configMaps: {}
+  # The values below are used in the Kubernetes Service for the Event Gateway
+  # The Event Gateway is a separate service of the API that is used to ingest events from other components
+  eventGateway:
+    enabled: true
+    service:
+      annotations: {}
+      labels: {}
+      name: "event-gateway"
+      port: 8082 # port that the service will expose
+      targetPort: 8082 # container port
+      type: ClusterIP
+  extraEnv: []
+  fullnameOverride: ""
+  image:
+    pullPolicy: IfNotPresent
+    repository: quay.io/kannika/kannika-api
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: "0.13.0"
+  imagePullSecrets: []
+  nameOverride: ""
+  nodeSelector: {}
   podAnnotations: {}
   podSecurityContext: {}
   # fsGroup: 2000
+  
+  # The amount of replicas to deploy
+  # The API server is not designed to be scaled horizontally, so it can only be set to 0 or 1
+  replicaCount: 1
+  resources: {}
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
   
   securityContext: {}
   #  capabilities:
@@ -124,158 +88,77 @@ api:
   #  seccompProfile:
   #    type: RuntimeDefault
   
-  resources: {}
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
-  
-  nodeSelector: {}
+  # The values below are used in the Kubernetes Service
+  service:
+    annotations: {}
+    enabled: true
+    labels: {}
+    port: 8080 # port that the service will expose
+    targetPort: 8080 # container port
+    type: ClusterIP
+  serviceAccount:
+    # Annotations to add to the service account
+    annotations: {}
+    clusterRbac:
+      # Specifies whether cluster-wide RBAC resources should be created for this service account
+      create: false
+    # Specifies whether a service account should be created
+    create: true
+    # The name of the service account to use.
+    # If not set and create is true, a name is generated using the name template
+    name: ""
+    rbac:
+      # Specifies whether namespaced RBAC resources should be created for this service account
+      create: true
+  # Persistence settings for the API server's data directory.
+  # The data directory is configured by the application setting `config.data.directory` (default: /var/lib/kannika).
+  # By default, an emptyDir volume is used, which is deleted when the pod is deleted.
+  # If you want to use a PersistentVolumeClaim, set `persistentVolume.enabled` to true.
+  # If you want to use a hostPath, set `storage.hostPath` to the path on the host.
+  storage:
+    # Store data on the host using this absolute path.
+    # This is useful for development and testing, but not recommended for production.
+    hostPath: ""
+    # Store data using a PersistentVolumeClaim.
+    persistentVolume:
+      accessModes:
+        - ReadWriteOnce
+      annotations: {}
+      # Whether to use a PersistentVolumeClaim to store data.
+      # Enabling this will take precedence over the other settings.
+      enabled: false
+      labels: {}
+      # Used to overwrite the default name of the PersistentVolumeClaim
+      nameOverwrite: ""
+      # The size of the PersistentVolumeClaim.
+      size: 5Gi
+      # The storage class to use for the PersistentVolumeClaim.
+      # If not set, the default storage class will be used.
+      storageClass: ""
   tolerations: []
-  affinity: {}
-  volumes:
   volumeMounts: []
-  configMaps: {}
-  extraEnv: []
+  volumes:
 
 # Values for operator subchart
 operator:
-  image:
-    repository: quay.io/kannika/kannika-operator
-    pullPolicy: IfNotPresent
-    # Overrides the image tag whose default is the chart appVersion.
-    tag: "0.13.0"
-  imagePullSecrets: []
-  nameOverride: ""
-  fullnameOverride: ""
-  # The amount of replicas to deploy of the operator.
-  # Minimum value is 0, maximum value is 1.
-  replicaCount: 1
-  # The values below are used in the Kubernetes Service
-  service:
-    enabled: true
-    type: ClusterIP
-    port: 8080 # port that the service will expose
-    targetPort: 8080 # container port
-    annotations: {}
-    labels: {}
+  affinity: {}
   # Application settings
   config:
-    # Settings for the core image.
-    # The core image is the image that is used to run the backup and restore jobs.
-    coreImage:
-      repository: quay.io/kannika/kannika-core
-      pullPolicy: IfNotPresent
-      tag: "0.13.0"
-    logging:
-      # The format of the logs.
-      # Can be "json" or "text".
-      # If not set, the default format is used (json).
-      format: "json"
-    # Settings for the event gateway
-    # The event gateway is used to ingest events from Kannika Armory components
-    eventGateway:
-      enabled: false
-      service:
-        name: event-gateway
-        namespace: ""
-        port: 8082
-    # Storage settings
-    storage:
-      # The storage class to use
-      # If not set, the operator will attempt to detect the correct storage class to use.
-      class: ""
-    # Default settings for pods that are spawned by the operator
-    pod:
-      # Service account to use for each pod spawned by the operator
-      serviceAccountName: ""
-      # Resources to add to each pod spawned by the operator
-      resources: {}
-      #      requests:
-      #        memory: "64Mi"
-      #        cpu: "100m"
-      #      limits:
-      #        memory: "1Gi"
-      #        cpu: "1000m"
-  
-      # Default security context for pods spawned by the operator
-      # See https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
-      securityContext: {}
-      # Default tolerations for pods spawned by the operator
-      # See https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
-      tolerations: []
-      # Default affinity for pods spawned by the operator
-      # See https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity
-      affinity: {}
-      # Default node selector for pods spawned by the operator
-      # See https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
-      nodeSelector: {}
-      # Secrets to add to each pod spawned by the operator
-      # This takes precedence over the .imagePullSecrets and .global.imagePullSecrets settings
-      imagePullSecrets: []
-      # Default settings for containers spawned by the operator
-      container:
-        # Default security context for containers spawned by the operator
-        # See https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
-        securityContext: {}
-        #        capabilities:
-        #          drop:
-        #            - ALL
-        #        readOnlyRootFilesystem: true
-        #        runAsNonRoot: true
-        #        runAsUser: 1001011234
-        #        allowPrivilegeEscalation: false
-        #        seccompProfile:
-        #          type: RuntimeDefault
-  
-        # Override the default readiness probe of the Restore pod
-        # See https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
-        readinessProbe: {}
-        # Override the default liveness probe of the Restore pod
-        # See https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
-        livenessProbe: {}
-        # Set the startup probe for the Restore pod
-        # See https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
-        startupProbe: {}
     backup:
       pod:
-        # Service account to use for each Backup pod
-        # This takes precedence over the `.pod.serviceAccountName` setting.
-        serviceAccountName: ""
-        # Resources to add to each Backup pod
-        # This takes precedence over the `.config.pod.resources` settings.
-        resources: {}
-        #      requests:
-        #        memory: "64Mi"
-        #        cpu: "100m"
-        #      limits:
-        #        memory: "1Gi"
-        #        cpu: "1000m"
-  
-        # Default security context for Backup pods
-        # This takes precedence over the `.config.pod.securityContext` setting.
-        # See https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
-        securityContext: {}
-        # Default tolerations for Backup pods
-        # This takes precedence over the `.config.pod.tolerations` setting.
-        # See https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
-        tolerations: []
         # Default affinity for Backup pods
         # This takes precedence over the `.config.pod.affinity` setting.
         # See https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity
         affinity: {}
-        # Default node selector for Backup pods
-        # This takes precedence over the `.config.pod.nodeSelector` setting.
-        # See https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
-        nodeSelector: {}
-        # Secrets to add to each Backup pod spawned by the operator
-        # This takes precedence over the .imagePullSecrets and .global.imagePullSecrets settings
-        imagePullSecrets: []
         # Default settings for Backup pod containers
         # These settings take precedence over the `.config.pod.container` settings.
         container:
+          # Override the default liveness probe of the Backup pod
+          # See https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+          livenessProbe: {}
+          # Override the default readiness probe of the Backup pod
+          # See https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+          readinessProbe: {}
           # Default security context for Backup pod containers
           # This takes precedence over the `.config.pod.container.securityContext` setting.
           # See https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
@@ -290,22 +173,18 @@ operator:
           #        seccompProfile:
           #          type: RuntimeDefault
   
-          # Override the default readiness probe of the Backup pod
-          # See https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
-          readinessProbe: {}
-          # Override the default liveness probe of the Backup pod
-          # See https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
-          livenessProbe: {}
           # Set the startup probe for the Backup pod
           # See https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
           startupProbe: {}
-    restore:
-      pod:
-        # Service account to use for each Restore pod
-        # This takes precedence over the `.pod.serviceAccountName` setting.
-        serviceAccountName: ""
-        # Resources to add to each Restore pod
-        # This takes precedence over the `.config.pod.resources` setting.
+        # Secrets to add to each Backup pod spawned by the operator
+        # This takes precedence over the .imagePullSecrets and .global.imagePullSecrets settings
+        imagePullSecrets: []
+        # Default node selector for Backup pods
+        # This takes precedence over the `.config.pod.nodeSelector` setting.
+        # See https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
+        nodeSelector: {}
+        # Resources to add to each Backup pod
+        # This takes precedence over the `.config.pod.resources` settings.
         resources: {}
         #      requests:
         #        memory: "64Mi"
@@ -314,28 +193,103 @@ operator:
         #        memory: "1Gi"
         #        cpu: "1000m"
   
-        # Default security context for Restore pods
+        # Default security context for Backup pods
         # This takes precedence over the `.config.pod.securityContext` setting.
         # See https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
         securityContext: {}
-        # Default tolerations for Restore pods
+        # Service account to use for each Backup pod
+        # This takes precedence over the `.pod.serviceAccountName` setting.
+        serviceAccountName: ""
+        # Default tolerations for Backup pods
         # This takes precedence over the `.config.pod.tolerations` setting.
         # See https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
         tolerations: []
+    # Settings for the core image.
+    # The core image is the image that is used to run the backup and restore jobs.
+    coreImage:
+      pullPolicy: IfNotPresent
+      repository: quay.io/kannika/kannika-core
+      tag: "0.13.0"
+    # Settings for the event gateway
+    # The event gateway is used to ingest events from Kannika Armory components
+    eventGateway:
+      enabled: false
+      service:
+        name: event-gateway
+        namespace: ""
+        port: 8082
+    logging:
+      # The format of the logs.
+      # Can be "json" or "text".
+      # If not set, the default format is used (json).
+      format: "json"
+    # Default settings for pods that are spawned by the operator
+    pod:
+      # Default affinity for pods spawned by the operator
+      # See https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity
+      affinity: {}
+      # Default settings for containers spawned by the operator
+      container:
+        # Override the default liveness probe of the Restore pod
+        # See https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+        livenessProbe: {}
+        # Override the default readiness probe of the Restore pod
+        # See https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+        readinessProbe: {}
+        # Default security context for containers spawned by the operator
+        # See https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
+        securityContext: {}
+        #        capabilities:
+        #          drop:
+        #            - ALL
+        #        readOnlyRootFilesystem: true
+        #        runAsNonRoot: true
+        #        runAsUser: 1001011234
+        #        allowPrivilegeEscalation: false
+        #        seccompProfile:
+        #          type: RuntimeDefault
+  
+        # Set the startup probe for the Restore pod
+        # See https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+        startupProbe: {}
+      # Secrets to add to each pod spawned by the operator
+      # This takes precedence over the .imagePullSecrets and .global.imagePullSecrets settings
+      imagePullSecrets: []
+      # Default node selector for pods spawned by the operator
+      # See https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
+      nodeSelector: {}
+      # Resources to add to each pod spawned by the operator
+      resources: {}
+      #      requests:
+      #        memory: "64Mi"
+      #        cpu: "100m"
+      #      limits:
+      #        memory: "1Gi"
+      #        cpu: "1000m"
+  
+      # Default security context for pods spawned by the operator
+      # See https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
+      securityContext: {}
+      # Service account to use for each pod spawned by the operator
+      serviceAccountName: ""
+      # Default tolerations for pods spawned by the operator
+      # See https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
+      tolerations: []
+    restore:
+      pod:
         # Default affinity for Restore pods
         # This takes precedence over the `.config.pod.affinity` setting.
         # See https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity
         affinity: {}
-        # Default node selector for Restore pods
-        # This takes precedence over the `.config.pod.nodeSelector` setting.
-        # See https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
-        nodeSelector: {}
-        # Secrets to add to each Restore pod spawned by the operator
-        # This takes precedence over the .imagePullSecrets and .global.imagePullSecrets settings
-        imagePullSecrets: []
         # Default settings for Restore pod containers
         # These settings take precedence over the `.config.pod.container` setting.
         container:
+          # Override the default liveness probe of the Restore pod
+          # See https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+          livenessProbe: {}
+          # Override the default readiness probe of the Restore pod
+          # See https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+          readinessProbe: {}
           # Default security context for Restore pod containers
           # This takes precedence over the `.config.pod.container.securityContext` setting.
           # See https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
@@ -350,27 +304,17 @@ operator:
           #        seccompProfile:
           #          type: RuntimeDefault
   
-          # Override the default readiness probe of the Restore pod
-          # See https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
-          readinessProbe: {}
-          # Override the default liveness probe of the Restore pod
-          # See https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
-          livenessProbe: {}
           # Set the startup probe for the Backup pod
           # See https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
           startupProbe: {}
-    # Settings for the schema registry image.
-    # The schema registry image is the image that is used to run the schema registry backup and restore jobs.
-    schemaRegistryImage:
-      repository: quay.io/kannika/kannika-registry-backup
-      pullPolicy: IfNotPresent
-      tag: "0.13.0"
-    schemaRegistryBackup:
-      pod:
-        # Service account to use for each SchemaRegistryBackup pod
-        # This takes precedence over the `.pod.serviceAccountName` setting.
-        serviceAccountName: ""
-        # Resources to add to each SchemaRegistryBackup pod
+        # Secrets to add to each Restore pod spawned by the operator
+        # This takes precedence over the .imagePullSecrets and .global.imagePullSecrets settings
+        imagePullSecrets: []
+        # Default node selector for Restore pods
+        # This takes precedence over the `.config.pod.nodeSelector` setting.
+        # See https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
+        nodeSelector: {}
+        # Resources to add to each Restore pod
         # This takes precedence over the `.config.pod.resources` setting.
         resources: {}
         #      requests:
@@ -380,28 +324,32 @@ operator:
         #        memory: "1Gi"
         #        cpu: "1000m"
   
-        # Default security context for SchemaRegistryBackup pods
+        # Default security context for Restore pods
         # This takes precedence over the `.config.pod.securityContext` setting.
         # See https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
         securityContext: {}
-        # Default tolerations for SchemaRegistryBackup pods
+        # Service account to use for each Restore pod
+        # This takes precedence over the `.pod.serviceAccountName` setting.
+        serviceAccountName: ""
+        # Default tolerations for Restore pods
         # This takes precedence over the `.config.pod.tolerations` setting.
         # See https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
         tolerations: []
+    schemaRegistryBackup:
+      pod:
         # Default affinity for SchemaRegistryBackup pods
         # This takes precedence over the `.config.pod.affinity` setting.
         # See https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity
         affinity: {}
-        # Default node selector for SchemaRegistryBackup pods
-        # This takes precedence over the `.config.pod.nodeSelector` setting.
-        # See https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
-        nodeSelector: {}
-        # Secrets to add to each SchemaRegistryBackup pod spawned by the operator
-        # This takes precedence over the .imagePullSecrets and .global.imagePullSecrets settings
-        imagePullSecrets: []
         # Default settings for SchemaRegistryBackup pod containers
         # These settings take precedence over the `.config.pod.container` setting.
         container:
+          # Override the default liveness probe of the SchemaRegistryBackup pod
+          # See https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+          livenessProbe: {}
+          # Override the default readiness probe of the SchemaRegistryBackup pod
+          # See https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+          readinessProbe: {}
           # Default security context for SchemaRegistryBackup pod containers
           # This takes precedence over the `.config.pod.container.securityContext` setting.
           # See https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
@@ -416,21 +364,17 @@ operator:
           #        seccompProfile:
           #          type: RuntimeDefault
   
-          # Override the default readiness probe of the SchemaRegistryBackup pod
-          # See https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
-          readinessProbe: {}
-          # Override the default liveness probe of the SchemaRegistryBackup pod
-          # See https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
-          livenessProbe: {}
           # Set the startup probe for the SchemaRegistryBackup pod
           # See https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
           startupProbe: {}
-    schemaRegistryRestore:
-      pod:
-        # Service account to use for each SchemaRegistryRestore pod
-        # This takes precedence over the `.pod.serviceAccountName` setting.
-        serviceAccountName: ""
-        # Resources to add to each SchemaRegistryRestore pod
+        # Secrets to add to each SchemaRegistryBackup pod spawned by the operator
+        # This takes precedence over the .imagePullSecrets and .global.imagePullSecrets settings
+        imagePullSecrets: []
+        # Default node selector for SchemaRegistryBackup pods
+        # This takes precedence over the `.config.pod.nodeSelector` setting.
+        # See https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
+        nodeSelector: {}
+        # Resources to add to each SchemaRegistryBackup pod
         # This takes precedence over the `.config.pod.resources` setting.
         resources: {}
         #      requests:
@@ -440,28 +384,38 @@ operator:
         #        memory: "1Gi"
         #        cpu: "1000m"
   
-        # Default security context for SchemaRegistryRestore pods
+        # Default security context for SchemaRegistryBackup pods
         # This takes precedence over the `.config.pod.securityContext` setting.
         # See https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
         securityContext: {}
-        # Default tolerations for SchemaRegistryRestore pods
+        # Service account to use for each SchemaRegistryBackup pod
+        # This takes precedence over the `.pod.serviceAccountName` setting.
+        serviceAccountName: ""
+        # Default tolerations for SchemaRegistryBackup pods
         # This takes precedence over the `.config.pod.tolerations` setting.
         # See https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
         tolerations: []
+    # Settings for the schema registry image.
+    # The schema registry image is the image that is used to run the schema registry backup and restore jobs.
+    schemaRegistryImage:
+      pullPolicy: IfNotPresent
+      repository: quay.io/kannika/kannika-registry-backup
+      tag: "0.13.0"
+    schemaRegistryRestore:
+      pod:
         # Default affinity for SchemaRegistryRestore pods
         # This takes precedence over the `.config.pod.affinity` setting.
         # See https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity
         affinity: {}
-        # Default node selector for SchemaRegistryRestore pods
-        # This takes precedence over the `.config.pod.nodeSelector` setting.
-        # See https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
-        nodeSelector: {}
-        # Secrets to add to each SchemaRegistryRestore pod spawned by the operator
-        # This takes precedence over the .imagePullSecrets and .global.imagePullSecrets settings
-        imagePullSecrets: []
         # Default settings for SchemaRegistryRestore pod containers
         # These settings take precedence over the `.config.pod.container` setting.
         container:
+          # Override the default liveness probe of the SchemaRegistryRestore pod
+          # See https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+          livenessProbe: {}
+          # Override the default readiness probe of the SchemaRegistryRestore pod
+          # See https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+          readinessProbe: {}
           # Default security context for SchemaRegistryRestore pod containers
           # This takes precedence over the `.config.pod.container.securityContext` setting.
           # See https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
@@ -476,35 +430,61 @@ operator:
           #        seccompProfile:
           #          type: RuntimeDefault
   
-          # Override the default readiness probe of the SchemaRegistryRestore pod
-          # See https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
-          readinessProbe: {}
-          # Override the default liveness probe of the SchemaRegistryRestore pod
-          # See https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
-          livenessProbe: {}
           # Set the startup probe for the SchemaRegistryRestore pod
           # See https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
           startupProbe: {}
-  serviceAccount:
-    # Specifies whether a service account should be created
-    create: true
-    # Annotations to add to the service account
-    annotations: {}
-    # The name of the service account to use.
-    # If not set and create is true, a name is generated using the name template
-    name: ""
-    clusterRbac:
-      # Specifies whether cluster-wide RBAC resources should be created for this service account.
-      create: false
-    rbac:
-      # Specifies whether namespaced RBAC resources should be created for this service account.
-      create: true
+        # Secrets to add to each SchemaRegistryRestore pod spawned by the operator
+        # This takes precedence over the .imagePullSecrets and .global.imagePullSecrets settings
+        imagePullSecrets: []
+        # Default node selector for SchemaRegistryRestore pods
+        # This takes precedence over the `.config.pod.nodeSelector` setting.
+        # See https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
+        nodeSelector: {}
+        # Resources to add to each SchemaRegistryRestore pod
+        # This takes precedence over the `.config.pod.resources` setting.
+        resources: {}
+        #      requests:
+        #        memory: "64Mi"
+        #        cpu: "100m"
+        #      limits:
+        #        memory: "1Gi"
+        #        cpu: "1000m"
+  
+        # Default security context for SchemaRegistryRestore pods
+        # This takes precedence over the `.config.pod.securityContext` setting.
+        # See https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
+        securityContext: {}
+        # Service account to use for each SchemaRegistryRestore pod
+        # This takes precedence over the `.pod.serviceAccountName` setting.
+        serviceAccountName: ""
+        # Default tolerations for SchemaRegistryRestore pods
+        # This takes precedence over the `.config.pod.tolerations` setting.
+        # See https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
+        tolerations: []
+    # Storage settings
+    storage:
+      # The storage class to use
+      # If not set, the operator will attempt to detect the correct storage class to use.
+      class: ""
+  configMaps: {}
+  extraEnv: []
+  fullnameOverride: ""
+  image:
+    pullPolicy: IfNotPresent
+    repository: quay.io/kannika/kannika-operator
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: "0.13.0"
+  imagePullSecrets: []
+  nameOverride: ""
+  nodeSelector: {}
   podAnnotations: {}
   # Security context for the operator pod
   podSecurityContext: {}
   # fsGroup: 2000
   
-  securityContext: {}
+  # The amount of replicas to deploy of the operator.
+  # Minimum value is 0, maximum value is 1.
+  replicaCount: 1
   #  capabilities:
   #    drop:
   #      - ALL
@@ -522,62 +502,36 @@ operator:
   #   cpu: 100m
   #   memory: 128Mi
   
-  nodeSelector: {}
+  securityContext: {}
+  # The values below are used in the Kubernetes Service
+  service:
+    annotations: {}
+    enabled: true
+    labels: {}
+    port: 8080 # port that the service will expose
+    targetPort: 8080 # container port
+    type: ClusterIP
+  serviceAccount:
+    # Annotations to add to the service account
+    annotations: {}
+    clusterRbac:
+      # Specifies whether cluster-wide RBAC resources should be created for this service account.
+      create: false
+    # Specifies whether a service account should be created
+    create: true
+    # The name of the service account to use.
+    # If not set and create is true, a name is generated using the name template
+    name: ""
+    rbac:
+      # Specifies whether namespaced RBAC resources should be created for this service account.
+      create: true
   tolerations: []
-  affinity: {}
-  volumes: []
   volumeMounts: []
-  configMaps: {}
-  extraEnv: []
+  volumes: []
 
 # Values for console subchart
 console:
-  image:
-    repository: quay.io/kannika/kannika-console
-    pullPolicy: IfNotPresent
-    # Overrides the image tag whose default is the chart appVersion.
-    tag: "0.13.0"
-  imagePullSecrets: []
-  nameOverride: ""
-  fullnameOverride: ""
-  replicaCount: 1
-  # The values below are used in the Kubernetes Service
-  service:
-    enabled: true
-    port: 8080
-    type: ClusterIP
-    targetPort: 8080
-    annotations: {}
-    labels: {}
-  podAnnotations: {}
-  podSecurityContext: {}
-  # fsGroup: 2000
-  
-  securityContext: {}
-  #  capabilities:
-  #    drop:
-  #      - ALL
-  #  readOnlyRootFilesystem: true
-  #  runAsNonRoot: true
-  #  runAsUser: 1001011234
-  #  allowPrivilegeEscalation: false
-  #  seccompProfile:
-  #    type: RuntimeDefault
-  resources: {}
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
-  
-  nodeSelector: {}
-  tolerations: []
   affinity: {}
-  volumes: []
-  volumeMounts: []
-  configMaps: {}
-  extraEnv: []
   config:
     # The base URL of the API server.
     # The console will use this URL to make requests to the API server.
@@ -586,35 +540,80 @@ console:
     security:
       # Set to false to disable security
       enabled: true
+      # Configuration options for OIDC authentication.
+      oidc:
+        # The audience for the access token.
+        # This is used to validate the access token in the API.
+        # If the value is empty, the audience will not be validated.
+        audience: ""
+        # The authorization endpoint.
+        # This is used to initiate the authorization code flow.
+        # The authorization endpoint must support the response_type "code".
+        authEndpoint: ""
+        # The OIDC client ID.
+        clientId: ""
+        # The name of the claim in the access token that contains the user's name
+        # It will be used to show the name in the console
+        displayNameTokenClaim: ""
+        # If enabled is true, OIDC authentication will be enabled.
+        enabled: false
+        # The endpoint to redirect to the OIDC provider for logout.
+        logoutEndpoint: ""
+        # The additional scopes to request when requesting an access token
+        scope: ""
+        # The token endpoint.
+        # This is used to exchange the authorization code for an access token.
+        tokenEndpoint: ""
       # The timeout in seconds for user inactivity.
       # If the user is inactive for this duration, the user will be logged out.
       # If the value is empty, the user inactivity timeout feature will be disabled.
       # Default value is 900 seconds (15 minutes).
       userInactivityTimeoutSeconds: "900"
-      # Configuration options for OIDC authentication.
-      oidc:
-        # If enabled is true, OIDC authentication will be enabled.
-        enabled: false
-        # The OIDC client ID.
-        clientId: ""
-        # The authorization endpoint.
-        # This is used to initiate the authorization code flow.
-        # The authorization endpoint must support the response_type "code".
-        authEndpoint: ""
-        # The token endpoint.
-        # This is used to exchange the authorization code for an access token.
-        tokenEndpoint: ""
-        # The endpoint to redirect to the OIDC provider for logout.
-        logoutEndpoint: ""
-        # The audience for the access token.
-        # This is used to validate the access token in the API.
-        # If the value is empty, the audience will not be validated.
-        audience: ""
-        # The additional scopes to request when requesting an access token
-        scope: ""
-        # The name of the claim in the access token that contains the user's name
-        # It will be used to show the name in the console
-        displayNameTokenClaim: ""
+  configMaps: {}
+  extraEnv: []
+  fullnameOverride: ""
+  image:
+    pullPolicy: IfNotPresent
+    repository: quay.io/kannika/kannika-console
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: "0.13.0"
+  imagePullSecrets: []
+  nameOverride: ""
+  nodeSelector: {}
+  podAnnotations: {}
+  podSecurityContext: {}
+  # fsGroup: 2000
+  
+  replicaCount: 1
+  #  capabilities:
+  #    drop:
+  #      - ALL
+  #  readOnlyRootFilesystem: true
+  #  runAsNonRoot: true
+  #  runAsUser: 1001011234
+  #  allowPrivilegeEscalation: false
+  #  seccompProfile:
+  #    type: RuntimeDefault
+  resources: {}
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+  
+  securityContext: {}
+  # The values below are used in the Kubernetes Service
+  service:
+    annotations: {}
+    enabled: true
+    labels: {}
+    port: 8080
+    targetPort: 8080
+    type: ClusterIP
+  tolerations: []
+  volumeMounts: []
+  volumes: []
 
 # Global values shared across all subcharts
 global:

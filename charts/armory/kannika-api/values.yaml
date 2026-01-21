@@ -73,7 +73,6 @@ config:
       name: ""
       usernameKey: "username"
       passwordKey: "password"
-      namespace: ""
 
     oidc:
       issuerUri: ""
