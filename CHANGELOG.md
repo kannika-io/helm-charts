@@ -6,5 +6,5 @@ All notable changes to this project will be documented in this file.
 
 ### 🐛 Bug Fixes
 
-- Remove api.config.security.secret.namespace
+- Remove `api.config.security.secret.namespace`
 
