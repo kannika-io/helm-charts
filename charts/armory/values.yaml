@@ -58,7 +58,7 @@ api:
     pullPolicy: IfNotPresent
     repository: quay.io/kannika/kannika-api
     # Overrides the image tag whose default is the chart appVersion.
-    tag: "0.13.0"
+    tag: "0.14.0"
   imagePullSecrets: []
   nameOverride: ""
   nodeSelector: {}
@@ -139,6 +139,92 @@ api:
   volumeMounts: []
   volumes:
 
+# Values for console subchart
+console:
+  affinity: {}
+  config:
+    # The base URL of the API server.
+    # The console will use this URL to make requests to the API server.
+    # It will automatically append "/gql" to the base URL to access the GraphQL API.
+    apiUrl: ""
+    security:
+      # Set to false to disable security
+      enabled: true
+      # Configuration options for OIDC authentication.
+      oidc:
+        # The audience for the access token.
+        # This is used to validate the access token in the API.
+        # If the value is empty, the audience will not be validated.
+        audience: ""
+        # The authorization endpoint.
+        # This is used to initiate the authorization code flow.
+        # The authorization endpoint must support the response_type "code".
+        authEndpoint: ""
+        # The OIDC client ID.
+        clientId: ""
+        # The name of the claim in the access token that contains the user's name
+        # It will be used to show the name in the console
+        displayNameTokenClaim: ""
+        # If enabled is true, OIDC authentication will be enabled.
+        enabled: false
+        # The endpoint to redirect to the OIDC provider for logout.
+        logoutEndpoint: ""
+        # The additional scopes to request when requesting an access token
+        scope: ""
+        # The token endpoint.
+        # This is used to exchange the authorization code for an access token.
+        tokenEndpoint: ""
+      # The timeout in seconds for user inactivity.
+      # If the user is inactive for this duration, the user will be logged out.
+      # If the value is empty, the user inactivity timeout feature will be disabled.
+      # Default value is 900 seconds (15 minutes).
+      userInactivityTimeoutSeconds: "900"
+  configMaps: {}
+  extraEnv: []
+  fullnameOverride: ""
+  image:
+    pullPolicy: IfNotPresent
+    repository: quay.io/kannika/kannika-console
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: "0.14.0"
+  imagePullSecrets: []
+  nameOverride: ""
+  nodeSelector: {}
+  podAnnotations: {}
+  podSecurityContext: {}
+  # fsGroup: 2000
+  
+  replicaCount: 1
+  #  capabilities:
+  #    drop:
+  #      - ALL
+  #  readOnlyRootFilesystem: true
+  #  runAsNonRoot: true
+  #  runAsUser: 1001011234
+  #  allowPrivilegeEscalation: false
+  #  seccompProfile:
+  #    type: RuntimeDefault
+  resources: {}
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+  
+  securityContext: {}
+  # The values below are used in the Kubernetes Service
+  service:
+    annotations: {}
+    enabled: true
+    labels: {}
+    port: 8080
+    targetPort: 8080
+    type: ClusterIP
+  tolerations: []
+  volumeMounts: []
+  volumes: []
+
 # Values for operator subchart
 operator:
   affinity: {}
@@ -209,7 +295,7 @@ operator:
     coreImage:
       pullPolicy: IfNotPresent
       repository: quay.io/kannika/kannika-core
-      tag: "0.13.0"
+      tag: "0.14.0"
     # Settings for the event gateway
     # The event gateway is used to ingest events from Kannika Armory components
     eventGateway:
@@ -400,7 +486,7 @@ operator:
     schemaRegistryImage:
       pullPolicy: IfNotPresent
       repository: quay.io/kannika/kannika-registry-backup
-      tag: "0.13.0"
+      tag: "0.14.0"
     schemaRegistryRestore:
       pod:
         # Default affinity for SchemaRegistryRestore pods
@@ -473,7 +559,7 @@ operator:
     pullPolicy: IfNotPresent
     repository: quay.io/kannika/kannika-operator
     # Overrides the image tag whose default is the chart appVersion.
-    tag: "0.13.0"
+    tag: "0.14.0"
   imagePullSecrets: []
   nameOverride: ""
   nodeSelector: {}
@@ -525,92 +611,6 @@ operator:
     rbac:
       # Specifies whether namespaced RBAC resources should be created for this service account.
       create: true
-  tolerations: []
-  volumeMounts: []
-  volumes: []
-
-# Values for console subchart
-console:
-  affinity: {}
-  config:
-    # The base URL of the API server.
-    # The console will use this URL to make requests to the API server.
-    # It will automatically append "/gql" to the base URL to access the GraphQL API.
-    apiUrl: ""
-    security:
-      # Set to false to disable security
-      enabled: true
-      # Configuration options for OIDC authentication.
-      oidc:
-        # The audience for the access token.
-        # This is used to validate the access token in the API.
-        # If the value is empty, the audience will not be validated.
-        audience: ""
-        # The authorization endpoint.
-        # This is used to initiate the authorization code flow.
-        # The authorization endpoint must support the response_type "code".
-        authEndpoint: ""
-        # The OIDC client ID.
-        clientId: ""
-        # The name of the claim in the access token that contains the user's name
-        # It will be used to show the name in the console
-        displayNameTokenClaim: ""
-        # If enabled is true, OIDC authentication will be enabled.
-        enabled: false
-        # The endpoint to redirect to the OIDC provider for logout.
-        logoutEndpoint: ""
-        # The additional scopes to request when requesting an access token
-        scope: ""
-        # The token endpoint.
-        # This is used to exchange the authorization code for an access token.
-        tokenEndpoint: ""
-      # The timeout in seconds for user inactivity.
-      # If the user is inactive for this duration, the user will be logged out.
-      # If the value is empty, the user inactivity timeout feature will be disabled.
-      # Default value is 900 seconds (15 minutes).
-      userInactivityTimeoutSeconds: "900"
-  configMaps: {}
-  extraEnv: []
-  fullnameOverride: ""
-  image:
-    pullPolicy: IfNotPresent
-    repository: quay.io/kannika/kannika-console
-    # Overrides the image tag whose default is the chart appVersion.
-    tag: "0.13.0"
-  imagePullSecrets: []
-  nameOverride: ""
-  nodeSelector: {}
-  podAnnotations: {}
-  podSecurityContext: {}
-  # fsGroup: 2000
-  
-  replicaCount: 1
-  #  capabilities:
-  #    drop:
-  #      - ALL
-  #  readOnlyRootFilesystem: true
-  #  runAsNonRoot: true
-  #  runAsUser: 1001011234
-  #  allowPrivilegeEscalation: false
-  #  seccompProfile:
-  #    type: RuntimeDefault
-  resources: {}
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
-  
-  securityContext: {}
-  # The values below are used in the Kubernetes Service
-  service:
-    annotations: {}
-    enabled: true
-    labels: {}
-    port: 8080
-    targetPort: 8080
-    type: ClusterIP
   tolerations: []
   volumeMounts: []
   volumes: []

@@ -5,9 +5,9 @@ maintainers:
   - name: cymo-eu
     url: https://github.com/cymo-eu
 type: application
-version: 0.13.0
+version: 0.14.0
 # The app version is the default version of Kannika to install.
-appVersion: 0.13.0
+appVersion: 0.14.0
 # kubeVersion must be suffixed with "-0" to be able to match cloud providers
 # kubernetes versions like "v1.23.8-gke.1900". Their suffix is interpreted as a
 # pre-release. Our "-0" allows pre-releases to be matched.
@@ -16,15 +16,15 @@ dependencies:
   - name: kannika-console
     alias: console
     condition: console.enabled
-    version: "~0.13.0"
+    version: "~0.14.0"
     repository: file://../kannika-console
   - name: kannika-api
     alias: api
     condition: api.enabled
-    version: "~0.13.0"
+    version: "~0.14.0"
     repository: file://../kannika-api
   - name: kannika-operator
     alias: operator
     condition: operator.enabled
-    version: "~0.13.0"
+    version: "~0.14.0"
     repository: file://../kannika-operator

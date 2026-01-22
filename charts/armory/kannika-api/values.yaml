@@ -2,7 +2,7 @@ image:
   repository: quay.io/kannika/kannika-api
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "0.13.0"
+  tag: "0.14.0"
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
@@ -58,12 +58,10 @@ config:
   kubernetes:
     # This will be removed in 0.13. Use `global.kubernetes.namespace` instead.
     namespace: ""
-
   security:
     enabled: true
     username: "kannika"
     password: "kannika"
-
     # Secret configuration:
     # - `create`: when true the chart creates the Secret (default: true for backwards compatibility).
     # - `name`: optional name to use for the created Secret. If empty, the chart uses the release resource name.
@@ -73,7 +71,6 @@ config:
       name: ""
       usernameKey: "username"
       passwordKey: "password"
-
     oidc:
       issuerUri: ""
       audience: ""
@@ -92,7 +89,6 @@ config:
     # Directory where the API server stores cached data
     # Defaults to /var/lib/kannika
     directory: "/var/lib/kannika"
-
 serviceAccount:
   # Specifies whether a service account should be created
   create: true
