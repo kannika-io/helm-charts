@@ -2,15 +2,13 @@ image:
   repository: quay.io/kannika/kannika-operator
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "0.13.0"
+  tag: "0.14.0"
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
-
 # The amount of replicas to deploy of the operator.
 # Minimum value is 0, maximum value is 1.
 replicaCount: 1
-
 # The values below are used in the Kubernetes Service
 service:
   enabled: true
@@ -26,14 +24,12 @@ config:
   coreImage:
     repository: quay.io/kannika/kannika-core
     pullPolicy: IfNotPresent
-    tag: "0.13.0"
-
+    tag: "0.14.0"
   logging:
     # The format of the logs.
     # Can be "json" or "text".
     # If not set, the default format is used (json).
     format: "json"
-
   # Settings for the event gateway
   # The event gateway is used to ingest events from Kannika Armory components
   eventGateway:
@@ -42,7 +38,6 @@ config:
       name: event-gateway
       namespace: ""
       port: 8082
-
   # Storage settings
   storage:
     # The storage class to use
@@ -52,7 +47,6 @@ config:
   pod:
     # Service account to use for each pod spawned by the operator
     serviceAccountName: ""
-
     # Resources to add to each pod spawned by the operator
     resources: {}
     #      requests:
@@ -65,23 +59,18 @@ config:
     # Default security context for pods spawned by the operator
     # See https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
     securityContext: {}
-
     # Default tolerations for pods spawned by the operator
     # See https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
     tolerations: []
-
     # Default affinity for pods spawned by the operator
     # See https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity
     affinity: {}
-
     # Default node selector for pods spawned by the operator
     # See https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
     nodeSelector: {}
-
     # Secrets to add to each pod spawned by the operator
     # This takes precedence over the .imagePullSecrets and .global.imagePullSecrets settings
     imagePullSecrets: []
-
     # Default settings for containers spawned by the operator
     container:
       # Default security context for containers spawned by the operator
@@ -100,21 +89,17 @@ config:
       # Override the default readiness probe of the Restore pod
       # See https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
       readinessProbe: {}
-
       # Override the default liveness probe of the Restore pod
       # See https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
       livenessProbe: {}
-
       # Set the startup probe for the Restore pod
       # See https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
       startupProbe: {}
-
   backup:
     pod:
       # Service account to use for each Backup pod
       # This takes precedence over the `.pod.serviceAccountName` setting.
       serviceAccountName: ""
-
       # Resources to add to each Backup pod
       # This takes precedence over the `.config.pod.resources` settings.
       resources: {}
@@ -129,26 +114,21 @@ config:
       # This takes precedence over the `.config.pod.securityContext` setting.
       # See https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
       securityContext: {}
-
       # Default tolerations for Backup pods
       # This takes precedence over the `.config.pod.tolerations` setting.
       # See https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
       tolerations: []
-
       # Default affinity for Backup pods
       # This takes precedence over the `.config.pod.affinity` setting.
       # See https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity
       affinity: {}
-
       # Default node selector for Backup pods
       # This takes precedence over the `.config.pod.nodeSelector` setting.
       # See https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
       nodeSelector: {}
-
       # Secrets to add to each Backup pod spawned by the operator
       # This takes precedence over the .imagePullSecrets and .global.imagePullSecrets settings
       imagePullSecrets: []
-
       # Default settings for Backup pod containers
       # These settings take precedence over the `.config.pod.container` settings.
       container:
@@ -169,21 +149,17 @@ config:
         # Override the default readiness probe of the Backup pod
         # See https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
         readinessProbe: {}
-
         # Override the default liveness probe of the Backup pod
         # See https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
         livenessProbe: {}
-
         # Set the startup probe for the Backup pod
         # See https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
         startupProbe: {}
-
   restore:
     pod:
       # Service account to use for each Restore pod
       # This takes precedence over the `.pod.serviceAccountName` setting.
       serviceAccountName: ""
-
       # Resources to add to each Restore pod
       # This takes precedence over the `.config.pod.resources` setting.
       resources: {}
@@ -198,26 +174,21 @@ config:
       # This takes precedence over the `.config.pod.securityContext` setting.
       # See https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
       securityContext: {}
-
       # Default tolerations for Restore pods
       # This takes precedence over the `.config.pod.tolerations` setting.
       # See https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
       tolerations: []
-
       # Default affinity for Restore pods
       # This takes precedence over the `.config.pod.affinity` setting.
       # See https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity
       affinity: {}
-
       # Default node selector for Restore pods
       # This takes precedence over the `.config.pod.nodeSelector` setting.
       # See https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
       nodeSelector: {}
-
       # Secrets to add to each Restore pod spawned by the operator
       # This takes precedence over the .imagePullSecrets and .global.imagePullSecrets settings
       imagePullSecrets: []
-
       # Default settings for Restore pod containers
       # These settings take precedence over the `.config.pod.container` setting.
       container:
@@ -238,28 +209,23 @@ config:
         # Override the default readiness probe of the Restore pod
         # See https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
         readinessProbe: {}
-
         # Override the default liveness probe of the Restore pod
         # See https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
         livenessProbe: {}
-
         # Set the startup probe for the Backup pod
         # See https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
         startupProbe: {}
-
   # Settings for the schema registry image.
   # The schema registry image is the image that is used to run the schema registry backup and restore jobs.
   schemaRegistryImage:
     repository: quay.io/kannika/kannika-registry-backup
     pullPolicy: IfNotPresent
-    tag: "0.13.0"
-
+    tag: "0.14.0"
   schemaRegistryBackup:
     pod:
       # Service account to use for each SchemaRegistryBackup pod
       # This takes precedence over the `.pod.serviceAccountName` setting.
       serviceAccountName: ""
-
       # Resources to add to each SchemaRegistryBackup pod
       # This takes precedence over the `.config.pod.resources` setting.
       resources: {}
@@ -274,26 +240,21 @@ config:
       # This takes precedence over the `.config.pod.securityContext` setting.
       # See https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
       securityContext: {}
-
       # Default tolerations for SchemaRegistryBackup pods
       # This takes precedence over the `.config.pod.tolerations` setting.
       # See https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
       tolerations: []
-
       # Default affinity for SchemaRegistryBackup pods
       # This takes precedence over the `.config.pod.affinity` setting.
       # See https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity
       affinity: {}
-
       # Default node selector for SchemaRegistryBackup pods
       # This takes precedence over the `.config.pod.nodeSelector` setting.
       # See https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
       nodeSelector: {}
-
       # Secrets to add to each SchemaRegistryBackup pod spawned by the operator
       # This takes precedence over the .imagePullSecrets and .global.imagePullSecrets settings
       imagePullSecrets: []
-
       # Default settings for SchemaRegistryBackup pod containers
       # These settings take precedence over the `.config.pod.container` setting.
       container:
@@ -314,21 +275,17 @@ config:
         # Override the default readiness probe of the SchemaRegistryBackup pod
         # See https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
         readinessProbe: {}
-
         # Override the default liveness probe of the SchemaRegistryBackup pod
         # See https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
         livenessProbe: {}
-
         # Set the startup probe for the SchemaRegistryBackup pod
         # See https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
         startupProbe: {}
-
   schemaRegistryRestore:
     pod:
       # Service account to use for each SchemaRegistryRestore pod
       # This takes precedence over the `.pod.serviceAccountName` setting.
       serviceAccountName: ""
-
       # Resources to add to each SchemaRegistryRestore pod
       # This takes precedence over the `.config.pod.resources` setting.
       resources: {}
@@ -343,26 +300,21 @@ config:
       # This takes precedence over the `.config.pod.securityContext` setting.
       # See https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
       securityContext: {}
-
       # Default tolerations for SchemaRegistryRestore pods
       # This takes precedence over the `.config.pod.tolerations` setting.
       # See https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
       tolerations: []
-
       # Default affinity for SchemaRegistryRestore pods
       # This takes precedence over the `.config.pod.affinity` setting.
       # See https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity
       affinity: {}
-
       # Default node selector for SchemaRegistryRestore pods
       # This takes precedence over the `.config.pod.nodeSelector` setting.
       # See https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
       nodeSelector: {}
-
       # Secrets to add to each SchemaRegistryRestore pod spawned by the operator
       # This takes precedence over the .imagePullSecrets and .global.imagePullSecrets settings
       imagePullSecrets: []
-
       # Default settings for SchemaRegistryRestore pod containers
       # These settings take precedence over the `.config.pod.container` setting.
       container:
@@ -383,15 +335,12 @@ config:
         # Override the default readiness probe of the SchemaRegistryRestore pod
         # See https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
         readinessProbe: {}
-
         # Override the default liveness probe of the SchemaRegistryRestore pod
         # See https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
         livenessProbe: {}
-
         # Set the startup probe for the SchemaRegistryRestore pod
         # See https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
         startupProbe: {}
-
 serviceAccount:
   # Specifies whether a service account should be created
   create: true
@@ -407,7 +356,6 @@ serviceAccount:
     # Specifies whether namespaced RBAC resources should be created for this service account.
     create: true
 podAnnotations: {}
-
 # Security context for the operator pod
 podSecurityContext: {}
 # fsGroup: 2000
