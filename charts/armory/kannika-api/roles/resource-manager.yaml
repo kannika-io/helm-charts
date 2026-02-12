@@ -47,3 +47,12 @@ rules:
       - get
       - list
       - watch
+
+  - apiGroups:
+      - batch
+    resources:
+      - jobs
+    verbs:
+      - get
+      - list
+      - delete

@@ -2,13 +2,15 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 rules:
-# Watch Pods created by Deployments and StatefulSets
+# Manage Pods created by Kannika resources
 - apiGroups: [ "" ]
   resources:
     - pods
   verbs:
     - watch
     - list
+    - delete
+    - deletecollection
 
 # Deploy and manage Deployments/StatefulSets created by Kannika resources
 - apiGroups: [ "apps" ]
