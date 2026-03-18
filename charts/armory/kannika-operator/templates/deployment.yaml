@@ -49,10 +49,10 @@ spec:
             - name: KANNIKA_STORAGE_CLASS
               value: {{ .Values.config.storage.class | quote }}
             {{- end }}
-            {{- if .Values.config.logging.format }}
-            - name: KANNIKA_LOGGING_FORMAT
-              value: {{ .Values.config.logging.format | quote }}
-            {{- end }}
+            - name: KANNIKA_LOG_FORMAT
+              value: {{ .Values.global.logging.format | default "json" | quote }}
+            - name: KANNIKA_LOG_LEVEL
+              value: {{ .Values.global.logging.level | default "info" | quote }}
             {{- with .Values.extraEnv }}
             {{- toYaml . | nindent 12 }}
             {{- end }}

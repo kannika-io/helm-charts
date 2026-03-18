@@ -45,6 +45,10 @@ spec:
           env:
             - name: KANNIKA_VERSION
               value: {{ .Chart.AppVersion | quote }}
+            - name: KANNIKA_LOG_FORMAT
+              value: {{ .Values.global.logging.format | default "json" | quote }}
+            - name: KANNIKA_LOG_LEVEL
+              value: {{ .Values.global.logging.level | default "info" | quote }}
             {{- with .Values.extraEnv }}
             {{- toYaml . | nindent 12 }}
             {{- end }}

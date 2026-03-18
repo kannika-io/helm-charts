@@ -2,7 +2,7 @@ image:
   repository: quay.io/kannika/kannika-operator
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "0.14.1"
+  tag: "0.15.0"
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
@@ -24,7 +24,7 @@ config:
   coreImage:
     repository: quay.io/kannika/kannika-core
     pullPolicy: IfNotPresent
-    tag: "0.14.1"
+    tag: "0.15.0"
   logging:
     # The format of the logs.
     # Can be "json" or "text".
@@ -220,7 +220,7 @@ config:
   schemaRegistryImage:
     repository: quay.io/kannika/kannika-registry-backup
     pullPolicy: IfNotPresent
-    tag: "0.14.1"
+    tag: "0.15.0"
   schemaRegistryBackup:
     pod:
       # Service account to use for each SchemaRegistryBackup pod
@@ -385,6 +385,9 @@ volumes: []
 volumeMounts: []
 configMaps: {}
 global:
+  logging:
+    format: "json"
+    level: "info"
   imagePullSecrets: []
   kubernetes:
     # Specifies which namespace to use for the resources (backups, etc.).

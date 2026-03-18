@@ -15,6 +15,11 @@ operator:
       enabled: true
 
 global:
+  logging:
+    # The format of the logs. Can be "json" or "text".
+    format: "json"
+    # The log level. Can be "error", "warn", "info", "debug", or "trace".
+    level: "info"
   imagePullSecrets: []
   kubernetes:
     # Specifies which namespace to use for the resources (backups, etc.).
