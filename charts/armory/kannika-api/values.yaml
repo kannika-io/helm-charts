@@ -2,7 +2,7 @@ image:
   repository: quay.io/kannika/kannika-api
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "0.14.1"
+  tag: "0.15.0"
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
@@ -133,6 +133,9 @@ volumes:
 volumeMounts: []
 configMaps: {}
 global:
+  logging:
+    format: "json"
+    level: "info"
   imagePullSecrets: []
   kubernetes:
     # Namespace where the Kannika Armory resources live (e.g. kannika-data).
