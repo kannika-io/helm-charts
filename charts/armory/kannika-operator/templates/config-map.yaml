@@ -33,6 +33,12 @@ data:
       {{- if .Values.config.backup.pod.nodeSelector }}
       {{- $_ := set $backupPodFields "nodeSelector" .Values.config.backup.pod.nodeSelector }}
       {{- end }}
+      {{- if .Values.config.backup.pod.labels }}
+      {{- $_ := set $backupPodFields "labels" .Values.config.backup.pod.labels }}
+      {{- end }}
+      {{- if .Values.config.backup.pod.annotations }}
+      {{- $_ := set $backupPodFields "annotations" .Values.config.backup.pod.annotations }}
+      {{- end }}
       {{- if .Values.config.backup.pod.serviceAccountName }}
       {{- $_ := set $backupPodFields "serviceAccountName" .Values.config.backup.pod.serviceAccountName | quote }}
       {{- end }}
@@ -85,6 +91,12 @@ data:
     {{- if .Values.config.restore.pod.nodeSelector }}
     {{- $_ := set $restorePodFields "nodeSelector" .Values.config.restore.pod.nodeSelector }}
     {{- end }}
+    {{- if .Values.config.restore.pod.labels }}
+    {{- $_ := set $restorePodFields "labels" .Values.config.restore.pod.labels }}
+    {{- end }}
+    {{- if .Values.config.restore.pod.annotations }}
+    {{- $_ := set $restorePodFields "annotations" .Values.config.restore.pod.annotations }}
+    {{- end }}
     {{- if .Values.config.restore.pod.serviceAccountName }}
     {{- $_ := set $restorePodFields "serviceAccountName" .Values.config.restore.pod.serviceAccountName | quote }}
     {{- end }}
@@ -135,6 +147,12 @@ data:
     {{- end }}
     {{- if .Values.config.schemaRegistryBackup.pod.nodeSelector }}
     {{- $_ := set $schemaRegistryBackupPodFields "nodeSelector" .Values.config.schemaRegistryBackup.pod.nodeSelector }}
+    {{- end }}
+    {{- if .Values.config.schemaRegistryBackup.pod.labels }}
+    {{- $_ := set $schemaRegistryBackupPodFields "labels" .Values.config.schemaRegistryBackup.pod.labels }}
+    {{- end }}
+    {{- if .Values.config.schemaRegistryBackup.pod.annotations }}
+    {{- $_ := set $schemaRegistryBackupPodFields "annotations" .Values.config.schemaRegistryBackup.pod.annotations }}
     {{- end }}
     {{- if .Values.config.schemaRegistryBackup.pod.serviceAccountName }}
     {{- $_ := set $schemaRegistryBackupPodFields "serviceAccountName" .Values.config.schemaRegistryBackup.pod.serviceAccountName | quote }}
@@ -187,6 +205,12 @@ data:
     {{- if .Values.config.schemaRegistryRestore.pod.nodeSelector }}
     {{- $_ := set $schemaRegistryRestorePodFields "nodeSelector" .Values.config.schemaRegistryRestore.pod.nodeSelector }}
     {{- end }}
+    {{- if .Values.config.schemaRegistryRestore.pod.labels }}
+    {{- $_ := set $schemaRegistryRestorePodFields "labels" .Values.config.schemaRegistryRestore.pod.labels }}
+    {{- end }}
+    {{- if .Values.config.schemaRegistryRestore.pod.annotations }}
+    {{- $_ := set $schemaRegistryRestorePodFields "annotations" .Values.config.schemaRegistryRestore.pod.annotations }}
+    {{- end }}
     {{- if .Values.config.schemaRegistryRestore.pod.serviceAccountName }}
     {{- $_ := set $schemaRegistryRestorePodFields "serviceAccountName" .Values.config.schemaRegistryRestore.pod.serviceAccountName | quote }}
     {{- end }}
@@ -233,6 +257,12 @@ data:
     {{- end }}
     {{- if .Values.config.pod.nodeSelector }}
     {{- $_ := set $podFields "nodeSelector" .Values.config.pod.nodeSelector }}
+    {{- end }}
+    {{- if .Values.config.pod.labels }}
+    {{- $_ := set $podFields "labels" .Values.config.pod.labels }}
+    {{- end }}
+    {{- if .Values.config.pod.annotations }}
+    {{- $_ := set $podFields "annotations" .Values.config.pod.annotations }}
     {{- end }}
     {{- if .Values.config.pod.serviceAccountName }}
     {{- $_ := set $podFields "serviceAccountName" .Values.config.pod.serviceAccountName | quote }}

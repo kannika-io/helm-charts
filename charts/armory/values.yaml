@@ -58,7 +58,7 @@ api:
     pullPolicy: IfNotPresent
     repository: quay.io/kannika/kannika-api
     # Overrides the image tag whose default is the chart appVersion.
-    tag: "0.15.0"
+    tag: "0.15.1"
   imagePullSecrets: []
   nameOverride: ""
   nodeSelector: {}
@@ -186,7 +186,7 @@ console:
     pullPolicy: IfNotPresent
     repository: quay.io/kannika/kannika-console
     # Overrides the image tag whose default is the chart appVersion.
-    tag: "0.15.0"
+    tag: "0.15.1"
   imagePullSecrets: []
   nameOverride: ""
   nodeSelector: {}
@@ -236,6 +236,8 @@ operator:
         # This takes precedence over the `.config.pod.affinity` setting.
         # See https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity
         affinity: {}
+        # Default annotations to add to Backup pod metadata. Takes precedence over `.config.pod.annotations`.
+        annotations: {}
         # Default settings for Backup pod containers
         # These settings take precedence over the `.config.pod.container` settings.
         container:
@@ -265,6 +267,8 @@ operator:
         # Secrets to add to each Backup pod spawned by the operator
         # This takes precedence over the .imagePullSecrets and .global.imagePullSecrets settings
         imagePullSecrets: []
+        # Default labels to add to Backup pod metadata. Takes precedence over `.config.pod.labels`.
+        labels: {}
         # Default node selector for Backup pods
         # This takes precedence over the `.config.pod.nodeSelector` setting.
         # See https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
@@ -295,7 +299,7 @@ operator:
     coreImage:
       pullPolicy: IfNotPresent
       repository: quay.io/kannika/kannika-core
-      tag: "0.15.0"
+      tag: "0.15.1"
     # Settings for the event gateway
     # The event gateway is used to ingest events from Kannika Armory components
     eventGateway:
@@ -314,6 +318,8 @@ operator:
       # Default affinity for pods spawned by the operator
       # See https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity
       affinity: {}
+      # Default annotations to add to pod metadata. Merged with existing annotations; existing keys win.
+      annotations: {}
       # Default settings for containers spawned by the operator
       container:
         # Override the default liveness probe of the Restore pod
@@ -341,6 +347,8 @@ operator:
       # Secrets to add to each pod spawned by the operator
       # This takes precedence over the .imagePullSecrets and .global.imagePullSecrets settings
       imagePullSecrets: []
+      # Default labels to add to pod metadata. Merged with existing labels; existing keys win.
+      labels: {}
       # Default node selector for pods spawned by the operator
       # See https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
       nodeSelector: {}
@@ -367,6 +375,8 @@ operator:
         # This takes precedence over the `.config.pod.affinity` setting.
         # See https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity
         affinity: {}
+        # Default annotations to add to Restore pod metadata. Takes precedence over `.config.pod.annotations`.
+        annotations: {}
         # Default settings for Restore pod containers
         # These settings take precedence over the `.config.pod.container` setting.
         container:
@@ -396,6 +406,8 @@ operator:
         # Secrets to add to each Restore pod spawned by the operator
         # This takes precedence over the .imagePullSecrets and .global.imagePullSecrets settings
         imagePullSecrets: []
+        # Default labels to add to Restore pod metadata. Takes precedence over `.config.pod.labels`.
+        labels: {}
         # Default node selector for Restore pods
         # This takes precedence over the `.config.pod.nodeSelector` setting.
         # See https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
@@ -427,6 +439,8 @@ operator:
         # This takes precedence over the `.config.pod.affinity` setting.
         # See https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity
         affinity: {}
+        # Default annotations to add to SchemaRegistryBackup pod metadata. Takes precedence over `.config.pod.annotations`.
+        annotations: {}
         # Default settings for SchemaRegistryBackup pod containers
         # These settings take precedence over the `.config.pod.container` setting.
         container:
@@ -456,6 +470,8 @@ operator:
         # Secrets to add to each SchemaRegistryBackup pod spawned by the operator
         # This takes precedence over the .imagePullSecrets and .global.imagePullSecrets settings
         imagePullSecrets: []
+        # Default labels to add to SchemaRegistryBackup pod metadata. Takes precedence over `.config.pod.labels`.
+        labels: {}
         # Default node selector for SchemaRegistryBackup pods
         # This takes precedence over the `.config.pod.nodeSelector` setting.
         # See https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
@@ -486,13 +502,15 @@ operator:
     schemaRegistryImage:
       pullPolicy: IfNotPresent
       repository: quay.io/kannika/kannika-registry-backup
-      tag: "0.15.0"
+      tag: "0.15.1"
     schemaRegistryRestore:
       pod:
         # Default affinity for SchemaRegistryRestore pods
         # This takes precedence over the `.config.pod.affinity` setting.
         # See https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity
         affinity: {}
+        # Default annotations to add to SchemaRegistryRestore pod metadata. Takes precedence over `.config.pod.annotations`.
+        annotations: {}
         # Default settings for SchemaRegistryRestore pod containers
         # These settings take precedence over the `.config.pod.container` setting.
         container:
@@ -522,6 +540,8 @@ operator:
         # Secrets to add to each SchemaRegistryRestore pod spawned by the operator
         # This takes precedence over the .imagePullSecrets and .global.imagePullSecrets settings
         imagePullSecrets: []
+        # Default labels to add to SchemaRegistryRestore pod metadata. Takes precedence over `.config.pod.labels`.
+        labels: {}
         # Default node selector for SchemaRegistryRestore pods
         # This takes precedence over the `.config.pod.nodeSelector` setting.
         # See https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
@@ -559,7 +579,7 @@ operator:
     pullPolicy: IfNotPresent
     repository: quay.io/kannika/kannika-operator
     # Overrides the image tag whose default is the chart appVersion.
-    tag: "0.15.0"
+    tag: "0.15.1"
   imagePullSecrets: []
   nameOverride: ""
   nodeSelector: {}

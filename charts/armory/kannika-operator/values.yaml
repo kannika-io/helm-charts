@@ -2,7 +2,7 @@ image:
   repository: quay.io/kannika/kannika-operator
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "0.15.0"
+  tag: "0.15.1"
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
@@ -24,7 +24,7 @@ config:
   coreImage:
     repository: quay.io/kannika/kannika-core
     pullPolicy: IfNotPresent
-    tag: "0.15.0"
+    tag: "0.15.1"
   logging:
     # The format of the logs.
     # Can be "json" or "text".
@@ -68,6 +68,10 @@ config:
     # Default node selector for pods spawned by the operator
     # See https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
     nodeSelector: {}
+    # Default labels to add to pod metadata. Merged with existing labels; existing keys win.
+    labels: {}
+    # Default annotations to add to pod metadata. Merged with existing annotations; existing keys win.
+    annotations: {}
     # Secrets to add to each pod spawned by the operator
     # This takes precedence over the .imagePullSecrets and .global.imagePullSecrets settings
     imagePullSecrets: []
@@ -126,6 +130,10 @@ config:
       # This takes precedence over the `.config.pod.nodeSelector` setting.
       # See https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
       nodeSelector: {}
+      # Default labels to add to Backup pod metadata. Takes precedence over `.config.pod.labels`.
+      labels: {}
+      # Default annotations to add to Backup pod metadata. Takes precedence over `.config.pod.annotations`.
+      annotations: {}
       # Secrets to add to each Backup pod spawned by the operator
       # This takes precedence over the .imagePullSecrets and .global.imagePullSecrets settings
       imagePullSecrets: []
@@ -186,6 +194,10 @@ config:
       # This takes precedence over the `.config.pod.nodeSelector` setting.
       # See https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
       nodeSelector: {}
+      # Default labels to add to Restore pod metadata. Takes precedence over `.config.pod.labels`.
+      labels: {}
+      # Default annotations to add to Restore pod metadata. Takes precedence over `.config.pod.annotations`.
+      annotations: {}
       # Secrets to add to each Restore pod spawned by the operator
       # This takes precedence over the .imagePullSecrets and .global.imagePullSecrets settings
       imagePullSecrets: []
@@ -220,7 +232,7 @@ config:
   schemaRegistryImage:
     repository: quay.io/kannika/kannika-registry-backup
     pullPolicy: IfNotPresent
-    tag: "0.15.0"
+    tag: "0.15.1"
   schemaRegistryBackup:
     pod:
       # Service account to use for each SchemaRegistryBackup pod
@@ -252,6 +264,10 @@ config:
       # This takes precedence over the `.config.pod.nodeSelector` setting.
       # See https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
       nodeSelector: {}
+      # Default labels to add to SchemaRegistryBackup pod metadata. Takes precedence over `.config.pod.labels`.
+      labels: {}
+      # Default annotations to add to SchemaRegistryBackup pod metadata. Takes precedence over `.config.pod.annotations`.
+      annotations: {}
       # Secrets to add to each SchemaRegistryBackup pod spawned by the operator
       # This takes precedence over the .imagePullSecrets and .global.imagePullSecrets settings
       imagePullSecrets: []
@@ -312,6 +328,10 @@ config:
       # This takes precedence over the `.config.pod.nodeSelector` setting.
       # See https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
       nodeSelector: {}
+      # Default labels to add to SchemaRegistryRestore pod metadata. Takes precedence over `.config.pod.labels`.
+      labels: {}
+      # Default annotations to add to SchemaRegistryRestore pod metadata. Takes precedence over `.config.pod.annotations`.
+      annotations: {}
       # Secrets to add to each SchemaRegistryRestore pod spawned by the operator
       # This takes precedence over the .imagePullSecrets and .global.imagePullSecrets settings
       imagePullSecrets: []
