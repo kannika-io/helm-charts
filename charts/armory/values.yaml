@@ -58,7 +58,7 @@ api:
     pullPolicy: IfNotPresent
     repository: quay.io/kannika/kannika-api
     # Overrides the image tag whose default is the chart appVersion.
-    tag: "0.15.1"
+    tag: "0.15.2"
   imagePullSecrets: []
   nameOverride: ""
   nodeSelector: {}
@@ -186,7 +186,7 @@ console:
     pullPolicy: IfNotPresent
     repository: quay.io/kannika/kannika-console
     # Overrides the image tag whose default is the chart appVersion.
-    tag: "0.15.1"
+    tag: "0.15.2"
   imagePullSecrets: []
   nameOverride: ""
   nodeSelector: {}
@@ -299,7 +299,7 @@ operator:
     coreImage:
       pullPolicy: IfNotPresent
       repository: quay.io/kannika/kannika-core
-      tag: "0.15.1"
+      tag: "0.15.2"
     # Settings for the event gateway
     # The event gateway is used to ingest events from Kannika Armory components
     eventGateway:
@@ -502,7 +502,7 @@ operator:
     schemaRegistryImage:
       pullPolicy: IfNotPresent
       repository: quay.io/kannika/kannika-registry-backup
-      tag: "0.15.1"
+      tag: "0.15.2"
     schemaRegistryRestore:
       pod:
         # Default affinity for SchemaRegistryRestore pods
@@ -579,7 +579,7 @@ operator:
     pullPolicy: IfNotPresent
     repository: quay.io/kannika/kannika-operator
     # Overrides the image tag whose default is the chart appVersion.
-    tag: "0.15.1"
+    tag: "0.15.2"
   imagePullSecrets: []
   nameOverride: ""
   nodeSelector: {}

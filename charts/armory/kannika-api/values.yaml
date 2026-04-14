@@ -2,7 +2,7 @@ image:
   repository: quay.io/kannika/kannika-api
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "0.15.1"
+  tag: "0.15.2"
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
