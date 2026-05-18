@@ -26,3 +26,6 @@ data:
   {{- if .Values.service.targetPort }}
   KANNIKA_SERVER_PORT: {{ .Values.service.targetPort | quote }}
   {{- end }}
+  KANNIKA_BACKUP_METRICS_SCRAPE_PERSIST_ENABLED: {{ .Values.config.backup.metrics.scrape.persist.enabled | quote }}
+  KANNIKA_BACKUP_METRICS_SCRAPE_PERSIST_INTERVAL: {{ .Values.config.backup.metrics.scrape.persist.interval | quote }}
+  KANNIKA_BACKUP_METRICS_SCRAPE_ON_STARTUP: {{ .Values.config.backup.metrics.scrape.onStartup | quote }}

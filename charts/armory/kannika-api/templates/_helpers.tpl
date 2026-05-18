@@ -182,10 +182,12 @@ Minimum 0 and maximum 1.
 
 {{- define "kannika-api.basicAuthEnvVars" -}}
 {{- if .Values.config.security.enabled }}
+  {{- $basicAuthEnabled := or .Values.config.security.basicAuth.enabled (not (empty .Values.config.security.username)) -}}
   {{- $secretName := .Values.config.security.secret.name | default (include "kannika-api.name" $) -}}
   {{- $userKey := .Values.config.security.secret.usernameKey | default "username" -}}
   {{- $passKey := .Values.config.security.secret.passwordKey | default "password" -}}
-  {{- if or .Values.config.security.secret.create .Values.config.security.secret.name }}
+- name: KANNIKA_SECURITY_BASIC_AUTH_ENABLED
+  value: {{ $basicAuthEnabled | quote }}
 - name: KANNIKA_SECURITY_BASIC_AUTH_USERNAME
   valueFrom:
     secretKeyRef:
@@ -196,15 +198,5 @@ Minimum 0 and maximum 1.
     secretKeyRef:
       name: {{ $secretName }}
       key: {{ $passKey }}
-  {{- else }}
-    {{- if .Values.config.security.username }}
-- name: KANNIKA_SECURITY_BASIC_AUTH_USERNAME
-  value: {{ .Values.config.security.username | quote }}
-    {{- end }}
-    {{- if .Values.config.security.password }}
-- name: KANNIKA_SECURITY_BASIC_AUTH_PASSWORD
-  value: {{ .Values.config.security.password | quote }}
-    {{- end }}
-  {{- end }}
 {{- end }}
 {{- end -}}
