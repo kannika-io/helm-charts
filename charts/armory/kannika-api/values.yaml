@@ -2,7 +2,7 @@ image:
   repository: quay.io/kannika/kannika-api
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "0.15.3"
+  tag: "0.15.4"
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
@@ -60,8 +60,15 @@ config:
     namespace: ""
   security:
     enabled: true
-    username: "kannika"
-    password: "kannika"
+    # Basic authentication configuration.
+    basicAuth:
+      enabled: true
+      username: "kannika"
+      password: "kannika"
+    # Deprecated: use basicAuth.username and basicAuth.password instead.
+    # Setting username here implies basicAuth.enabled=true for backwards compatibility.
+    username: ""
+    password: ""
     # Secret configuration:
     # - `create`: when true the chart creates the Secret (default: true for backwards compatibility).
     # - `name`: optional name to use for the created Secret. If empty, the chart uses the release resource name.
@@ -85,6 +92,26 @@ config:
     namespace: ""
     # The port of the Service to call
     port: 8080
+  backup:
+    metrics:
+      scrape:
+        # Periodic persistence of scraped pod metrics to the database.
+        # When enabled, the API periodically saves metrics collected by scrape workers to the database.
+        # This ensures the database has recent data to fall back on when the in-memory cache expires,
+        # preventing gaps in reported backup topic metrics after API restarts or cache evictions.
+        persist:
+          # Whether to enable periodic persistence of scraped metrics.
+          # When disabled, scraped metrics are only held in the in-memory cache and lost on restart.
+          enabled: true
+          # How often scraped metrics are persisted to the database.
+          # Lower values keep the database more up-to-date but increase write load.
+          # The first scrape after startup always persists immediately, regardless of this interval.
+          interval: "5m"
+        # Whether to start scrape workers for all discovered backup pods on API startup.
+        # When enabled, the API proactively scrapes metrics from all running backup pods
+        # immediately after starting, so the cache is warm before the first query arrives.
+        # When disabled, scrape workers only start when a metrics query triggers a cache miss.
+        onStartup: true
   data:
     # Directory where the API server stores cached data
     # Defaults to /var/lib/kannika
