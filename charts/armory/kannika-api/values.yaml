@@ -2,7 +2,7 @@ image:
   repository: quay.io/kannika/kannika-api
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "0.15.4"
+  tag: "0.15.5"
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
@@ -63,8 +63,8 @@ config:
     # Basic authentication configuration.
     basicAuth:
       enabled: true
-      username: "kannika"
-      password: "kannika"
+      username: ""
+      password: ""
     # Deprecated: use basicAuth.username and basicAuth.password instead.
     # Setting username here implies basicAuth.enabled=true for backwards compatibility.
     username: ""

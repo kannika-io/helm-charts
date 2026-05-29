@@ -683,6 +683,20 @@ spec:
                   More info: http://kubernetes.io/docs/user-guide/labels
                 nullable: true
                 type: object
+              lagMonitor:
+                description: |-
+                  Lag monitor configuration.
+                  Controls how frequently the backup checks for new data on the source topics
+                  and the timeout for each check.
+                nullable: true
+                properties:
+                  refreshInterval:
+                    default: 15s
+                    type: string
+                  requestTimeout:
+                    default: 10s
+                    type: string
+                type: object
               monitoring:
                 description: Container specs for the monitoring container
                 nullable: true
