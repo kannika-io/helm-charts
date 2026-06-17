@@ -2,7 +2,7 @@ image:
   repository: quay.io/kannika/kannika-operator
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "0.15.7"
+  tag: "0.16.0"
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
@@ -24,7 +24,7 @@ config:
   coreImage:
     repository: quay.io/kannika/kannika-core
     pullPolicy: IfNotPresent
-    tag: "0.15.7"
+    tag: "0.16.0"
   logging:
     # The format of the logs.
     # Can be "json" or "text".
@@ -232,7 +232,7 @@ config:
   schemaRegistryImage:
     repository: quay.io/kannika/kannika-registry-backup
     pullPolicy: IfNotPresent
-    tag: "0.15.7"
+    tag: "0.16.0"
   schemaRegistryBackup:
     pod:
       # Service account to use for each SchemaRegistryBackup pod
@@ -413,4 +413,17 @@ global:
     # Specifies which namespace to use for the resources (backups, etc.).
     # This is preferably a separate namespace from the installation namespace.
     namespace: ""
+  # Maintenance mode configuration.
+  maintenance:
+    # Whether maintenance mode is enabled.
+    # When enabled, the operator will stop reconciling backups and restores.
+    enabled: false
+    # Banner configuration.
+    # The banner is displayed to users to communicate maintenance status.
+    # The banner is shown regardless of whether maintenance mode is enabled.
+    banner:
+      # The message to display. Leave unset to hide the banner.
+      message:
+      # The severity of the banner. Can be "warning", "info", or "error".
+      variant: "info"
 extraEnv: []

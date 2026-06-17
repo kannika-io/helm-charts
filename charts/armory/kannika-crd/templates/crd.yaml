@@ -684,10 +684,7 @@ spec:
                 nullable: true
                 type: object
               lagMonitor:
-                description: |-
-                  Lag monitor configuration.
-                  Controls how frequently the backup checks for new data on the source topics
-                  and the timeout for each check.
+                description: Lag monitor configuration
                 nullable: true
                 properties:
                   refreshInterval:
@@ -866,6 +863,13 @@ spec:
                         properties:
                           name:
                             nullable: true
+                            oneOf:
+                            - required:
+                              - literal
+                            - required:
+                              - regex
+                            - required:
+                              - glob
                             properties:
                               glob:
                                 description: Matches a topic by name
@@ -877,13 +881,6 @@ spec:
                                 description: Matches topics who match against a regular expressions
                                 type: string
                             type: object
-                            oneOf:
-                            - required:
-                              - literal
-                            - required:
-                              - regex
-                            - required:
-                              - glob
                         type: object
                       nullable: true
                       type: array
@@ -1074,6 +1071,13 @@ spec:
                       properties:
                         name:
                           nullable: true
+                          oneOf:
+                          - required:
+                            - literal
+                          - required:
+                            - regex
+                          - required:
+                            - glob
                           properties:
                             glob:
                               description: Matches a topic by name
@@ -1085,13 +1089,6 @@ spec:
                               description: Matches topics who match against a regular expressions
                               type: string
                           type: object
-                          oneOf:
-                          - required:
-                            - literal
-                          - required:
-                            - regex
-                          - required:
-                            - glob
                       type: object
                     type: array
                   matchers:
@@ -1100,6 +1097,13 @@ spec:
                       properties:
                         name:
                           nullable: true
+                          oneOf:
+                          - required:
+                            - literal
+                          - required:
+                            - regex
+                          - required:
+                            - glob
                           properties:
                             glob:
                               description: Matches a topic by name
@@ -1111,13 +1115,6 @@ spec:
                               description: Matches topics who match against a regular expressions
                               type: string
                           type: object
-                          oneOf:
-                          - required:
-                            - literal
-                          - required:
-                            - regex
-                          - required:
-                            - glob
                       type: object
                     type: array
                 required:
@@ -1876,6 +1873,13 @@ spec:
                             properties:
                               name:
                                 nullable: true
+                                oneOf:
+                                - required:
+                                  - literal
+                                - required:
+                                  - regex
+                                - required:
+                                  - glob
                                 properties:
                                   glob:
                                     description: Matches a topic by name
@@ -1887,13 +1891,6 @@ spec:
                                     description: Matches topics who match against a regular expressions
                                     type: string
                                 type: object
-                                oneOf:
-                                - required:
-                                  - literal
-                                - required:
-                                  - regex
-                                - required:
-                                  - glob
                             type: object
                           nullable: true
                           type: array
@@ -2014,6 +2011,15 @@ spec:
                           x-kubernetes-list-map-keys:
                           - number
                           x-kubernetes-list-type: map
+                        snapshot:
+                          nullable: true
+                          properties:
+                            version:
+                              description: 'Snapshot version selector: "latest" or a version number (e.g. 1 or "v1")'
+                              x-kubernetes-int-or-string: true
+                          required:
+                          - version
+                          type: object
                         source:
                           type: string
                         target:
@@ -2925,8 +2931,11 @@ spec:
                     nullable: true
                     type: string
                   caCertificatePemFrom:
-                    nullable: true
                     description: Path to CA certificate, mapped to the `ssl.ca.pem` property
+                    nullable: true
+                    oneOf:
+                    - required:
+                      - secretKeyRef
                     properties:
                       secretKeyRef:
                         description: Selects the value from a Secret with a specific key
@@ -2945,9 +2954,6 @@ spec:
                         - name
                         type: object
                     type: object
-                    oneOf:
-                    - required:
-                      - secretKeyRef
                   certificatePemFrom:
                     description: The client's certificate, mapped to the `ssl.certificate.pem` property
                     oneOf:
@@ -2976,8 +2982,11 @@ spec:
                     nullable: true
                     type: string
                   privateKeyPasswordFrom:
-                    nullable: true
                     description: The client's private key passphrase, mapped to the `ssl.key.password` property
+                    nullable: true
+                    oneOf:
+                    - required:
+                      - secretKeyRef
                     properties:
                       secretKeyRef:
                         description: Selects the value from a Secret with a specific key
@@ -2996,9 +3005,6 @@ spec:
                         - name
                         type: object
                     type: object
-                    oneOf:
-                    - required:
-                      - secretKeyRef
                   privateKeyPemFrom:
                     description: The client's private key, mapped to the `ssl.key.pem` property
                     oneOf:
@@ -3030,32 +3036,11 @@ spec:
                 description: SASL/PLAIN or SASL/SCRAM credentials
                 properties:
                   clientIdFrom:
-                    nullable: true
                     description: OAuth client ID (required for OAUTHBEARER)
-                    properties:
-                      secretKeyRef:
-                        description: Selects the value from a Secret with a specific key
-                        properties:
-                          key:
-                            description: The key of the secret to select from.  Must be a valid secret key.
-                            type: string
-                          name:
-                            description: 'Name of the referent. This field is effectively required, but due to backwards compatibility is allowed to be empty. Instances of this type with an empty value here are almost certainly wrong. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names'
-                            type: string
-                          optional:
-                            description: Specify whether the Secret or its key must be defined
-                            type: boolean
-                        required:
-                        - key
-                        - name
-                        type: object
-                    type: object
-                    oneOf:
-                    - required:
-                      - secretKeyRef
-                  clientSecretFrom:
                     nullable: true
-                    description: OAuth client secret (required for OAUTHBEARER)
+                    oneOf:
+                    - required:
+                      - secretKeyRef
                     properties:
                       secretKeyRef:
                         description: Selects the value from a Secret with a specific key
@@ -3074,9 +3059,30 @@ spec:
                         - name
                         type: object
                     type: object
+                  clientSecretFrom:
+                    description: OAuth client secret (required for OAUTHBEARER)
+                    nullable: true
                     oneOf:
                     - required:
                       - secretKeyRef
+                    properties:
+                      secretKeyRef:
+                        description: Selects the value from a Secret with a specific key
+                        properties:
+                          key:
+                            description: The key of the secret to select from.  Must be a valid secret key.
+                            type: string
+                          name:
+                            description: 'Name of the referent. This field is effectively required, but due to backwards compatibility is allowed to be empty. Instances of this type with an empty value here are almost certainly wrong. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names'
+                            type: string
+                          optional:
+                            description: Specify whether the Secret or its key must be defined
+                            type: boolean
+                        required:
+                        - key
+                        - name
+                        type: object
+                    type: object
                   description:
                     description: Optional description
                     nullable: true
@@ -3107,8 +3113,11 @@ spec:
                     - OAUTHBEARER
                     type: string
                   passwordFrom:
-                    nullable: true
                     description: The password (required for PLAIN/SCRAM)
+                    nullable: true
+                    oneOf:
+                    - required:
+                      - secretKeyRef
                     properties:
                       secretKeyRef:
                         description: Selects the value from a Secret with a specific key
@@ -3127,9 +3136,6 @@ spec:
                         - name
                         type: object
                     type: object
-                    oneOf:
-                    - required:
-                      - secretKeyRef
                   scope:
                     description: OAuth scope (optional, for OAUTHBEARER)
                     nullable: true
@@ -3143,32 +3149,11 @@ spec:
                         nullable: true
                         type: string
                       caCertificatePemFrom:
-                        nullable: true
                         description: Path to CA certificate, mapped to the `ssl.ca.pem` property.
-                        properties:
-                          secretKeyRef:
-                            description: Selects the value from a Secret with a specific key
-                            properties:
-                              key:
-                                description: The key of the secret to select from.  Must be a valid secret key.
-                                type: string
-                              name:
-                                description: 'Name of the referent. This field is effectively required, but due to backwards compatibility is allowed to be empty. Instances of this type with an empty value here are almost certainly wrong. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names'
-                                type: string
-                              optional:
-                                description: Specify whether the Secret or its key must be defined
-                                type: boolean
-                            required:
-                            - key
-                            - name
-                            type: object
-                        type: object
-                        oneOf:
-                        - required:
-                          - secretKeyRef
-                      certificatePemFrom:
                         nullable: true
-                        description: The client's certificate, mapped to the `ssl.certificate.pem` property.
+                        oneOf:
+                        - required:
+                          - secretKeyRef
                         properties:
                           secretKeyRef:
                             description: Selects the value from a Secret with a specific key
@@ -3187,39 +3172,39 @@ spec:
                             - name
                             type: object
                         type: object
+                      certificatePemFrom:
+                        description: The client's certificate, mapped to the `ssl.certificate.pem` property.
+                        nullable: true
                         oneOf:
                         - required:
                           - secretKeyRef
+                        properties:
+                          secretKeyRef:
+                            description: Selects the value from a Secret with a specific key
+                            properties:
+                              key:
+                                description: The key of the secret to select from.  Must be a valid secret key.
+                                type: string
+                              name:
+                                description: 'Name of the referent. This field is effectively required, but due to backwards compatibility is allowed to be empty. Instances of this type with an empty value here are almost certainly wrong. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names'
+                                type: string
+                              optional:
+                                description: Specify whether the Secret or its key must be defined
+                                type: boolean
+                            required:
+                            - key
+                            - name
+                            type: object
+                        type: object
                       enabled:
                         nullable: true
                         type: boolean
                       privateKeyPasswordFrom:
-                        nullable: true
                         description: The client's private key passphrase, mapped to the `ssl.key.password` property
-                        properties:
-                          secretKeyRef:
-                            description: Selects the value from a Secret with a specific key
-                            properties:
-                              key:
-                                description: The key of the secret to select from.  Must be a valid secret key.
-                                type: string
-                              name:
-                                description: 'Name of the referent. This field is effectively required, but due to backwards compatibility is allowed to be empty. Instances of this type with an empty value here are almost certainly wrong. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names'
-                                type: string
-                              optional:
-                                description: Specify whether the Secret or its key must be defined
-                                type: boolean
-                            required:
-                            - key
-                            - name
-                            type: object
-                        type: object
-                        oneOf:
-                        - required:
-                          - secretKeyRef
-                      privateKeyPemFrom:
                         nullable: true
-                        description: The client's private key, mapped to the `ssl.key.pem` property
+                        oneOf:
+                        - required:
+                          - secretKeyRef
                         properties:
                           secretKeyRef:
                             description: Selects the value from a Secret with a specific key
@@ -3238,17 +3223,41 @@ spec:
                             - name
                             type: object
                         type: object
+                      privateKeyPemFrom:
+                        description: The client's private key, mapped to the `ssl.key.pem` property
+                        nullable: true
                         oneOf:
                         - required:
                           - secretKeyRef
+                        properties:
+                          secretKeyRef:
+                            description: Selects the value from a Secret with a specific key
+                            properties:
+                              key:
+                                description: The key of the secret to select from.  Must be a valid secret key.
+                                type: string
+                              name:
+                                description: 'Name of the referent. This field is effectively required, but due to backwards compatibility is allowed to be empty. Instances of this type with an empty value here are almost certainly wrong. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names'
+                                type: string
+                              optional:
+                                description: Specify whether the Secret or its key must be defined
+                                type: boolean
+                            required:
+                            - key
+                            - name
+                            type: object
+                        type: object
                     type: object
                   tokenEndpoint:
                     description: OAuth token endpoint URL (required for OAUTHBEARER)
                     nullable: true
                     type: string
                   usernameFrom:
-                    nullable: true
                     description: The username (required for PLAIN/SCRAM)
+                    nullable: true
+                    oneOf:
+                    - required:
+                      - secretKeyRef
                     properties:
                       secretKeyRef:
                         description: Selects the value from a Secret with a specific key
@@ -3267,9 +3276,6 @@ spec:
                         - name
                         type: object
                     type: object
-                    oneOf:
-                    - required:
-                      - secretKeyRef
                 required:
                 - mechanism
                 type: object
@@ -3322,32 +3328,11 @@ spec:
                         nullable: true
                         type: string
                       caCertificatePemFrom:
-                        nullable: true
                         description: Path to CA certificate, mapped to the `ssl.ca.pem` property.
-                        properties:
-                          secretKeyRef:
-                            description: Selects the value from a Secret with a specific key
-                            properties:
-                              key:
-                                description: The key of the secret to select from.  Must be a valid secret key.
-                                type: string
-                              name:
-                                description: 'Name of the referent. This field is effectively required, but due to backwards compatibility is allowed to be empty. Instances of this type with an empty value here are almost certainly wrong. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names'
-                                type: string
-                              optional:
-                                description: Specify whether the Secret or its key must be defined
-                                type: boolean
-                            required:
-                            - key
-                            - name
-                            type: object
-                        type: object
-                        oneOf:
-                        - required:
-                          - secretKeyRef
-                      certificatePemFrom:
                         nullable: true
-                        description: The client's certificate, mapped to the `ssl.certificate.pem` property.
+                        oneOf:
+                        - required:
+                          - secretKeyRef
                         properties:
                           secretKeyRef:
                             description: Selects the value from a Secret with a specific key
@@ -3366,39 +3351,39 @@ spec:
                             - name
                             type: object
                         type: object
+                      certificatePemFrom:
+                        description: The client's certificate, mapped to the `ssl.certificate.pem` property.
+                        nullable: true
                         oneOf:
                         - required:
                           - secretKeyRef
+                        properties:
+                          secretKeyRef:
+                            description: Selects the value from a Secret with a specific key
+                            properties:
+                              key:
+                                description: The key of the secret to select from.  Must be a valid secret key.
+                                type: string
+                              name:
+                                description: 'Name of the referent. This field is effectively required, but due to backwards compatibility is allowed to be empty. Instances of this type with an empty value here are almost certainly wrong. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names'
+                                type: string
+                              optional:
+                                description: Specify whether the Secret or its key must be defined
+                                type: boolean
+                            required:
+                            - key
+                            - name
+                            type: object
+                        type: object
                       enabled:
                         nullable: true
                         type: boolean
                       privateKeyPasswordFrom:
-                        nullable: true
                         description: The client's private key passphrase, mapped to the `ssl.key.password` property
-                        properties:
-                          secretKeyRef:
-                            description: Selects the value from a Secret with a specific key
-                            properties:
-                              key:
-                                description: The key of the secret to select from.  Must be a valid secret key.
-                                type: string
-                              name:
-                                description: 'Name of the referent. This field is effectively required, but due to backwards compatibility is allowed to be empty. Instances of this type with an empty value here are almost certainly wrong. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names'
-                                type: string
-                              optional:
-                                description: Specify whether the Secret or its key must be defined
-                                type: boolean
-                            required:
-                            - key
-                            - name
-                            type: object
-                        type: object
-                        oneOf:
-                        - required:
-                          - secretKeyRef
-                      privateKeyPemFrom:
                         nullable: true
-                        description: The client's private key, mapped to the `ssl.key.pem` property
+                        oneOf:
+                        - required:
+                          - secretKeyRef
                         properties:
                           secretKeyRef:
                             description: Selects the value from a Secret with a specific key
@@ -3417,9 +3402,30 @@ spec:
                             - name
                             type: object
                         type: object
+                      privateKeyPemFrom:
+                        description: The client's private key, mapped to the `ssl.key.pem` property
+                        nullable: true
                         oneOf:
                         - required:
                           - secretKeyRef
+                        properties:
+                          secretKeyRef:
+                            description: Selects the value from a Secret with a specific key
+                            properties:
+                              key:
+                                description: The key of the secret to select from.  Must be a valid secret key.
+                                type: string
+                              name:
+                                description: 'Name of the referent. This field is effectively required, but due to backwards compatibility is allowed to be empty. Instances of this type with an empty value here are almost certainly wrong. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names'
+                                type: string
+                              optional:
+                                description: Specify whether the Secret or its key must be defined
+                                type: boolean
+                            required:
+                            - key
+                            - name
+                            type: object
+                        type: object
                     type: object
                   url:
                     format: uri
