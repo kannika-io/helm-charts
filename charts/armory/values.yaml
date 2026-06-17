@@ -85,7 +85,7 @@ api:
     pullPolicy: IfNotPresent
     repository: quay.io/kannika/kannika-api
     # Overrides the image tag whose default is the chart appVersion.
-    tag: "0.15.7"
+    tag: "0.16.0"
   imagePullSecrets: []
   nameOverride: ""
   nodeSelector: {}
@@ -213,7 +213,7 @@ console:
     pullPolicy: IfNotPresent
     repository: quay.io/kannika/kannika-console
     # Overrides the image tag whose default is the chart appVersion.
-    tag: "0.15.7"
+    tag: "0.16.0"
   imagePullSecrets: []
   nameOverride: ""
   nodeSelector: {}
@@ -326,7 +326,7 @@ operator:
     coreImage:
       pullPolicy: IfNotPresent
       repository: quay.io/kannika/kannika-core
-      tag: "0.15.7"
+      tag: "0.16.0"
     # Settings for the event gateway
     # The event gateway is used to ingest events from Kannika Armory components
     eventGateway:
@@ -529,7 +529,7 @@ operator:
     schemaRegistryImage:
       pullPolicy: IfNotPresent
       repository: quay.io/kannika/kannika-registry-backup
-      tag: "0.15.7"
+      tag: "0.16.0"
     schemaRegistryRestore:
       pod:
         # Default affinity for SchemaRegistryRestore pods
@@ -606,7 +606,7 @@ operator:
     pullPolicy: IfNotPresent
     repository: quay.io/kannika/kannika-operator
     # Overrides the image tag whose default is the chart appVersion.
-    tag: "0.15.7"
+    tag: "0.16.0"
   imagePullSecrets: []
   nameOverride: ""
   nodeSelector: {}
@@ -672,3 +672,16 @@ global:
   logging:
     format: "json"
     level: "info"
+  # Maintenance mode configuration.
+  maintenance:
+    # Banner configuration.
+    # The banner is displayed to users to communicate maintenance status.
+    # The banner is shown regardless of whether maintenance mode is enabled.
+    banner:
+      # The message to display. Leave unset to hide the banner.
+      message:
+      # The severity of the banner. Can be "warning", "info", or "error".
+      variant: "info"
+    # Whether maintenance mode is enabled.
+    # When enabled, the operator will stop reconciling backups and restores.
+    enabled: false

@@ -280,3 +280,11 @@ data:
     pod:
       {{- toYaml $podFields | nindent 6 }}
     {{- end }}
+
+    maintenance:
+      enabled: {{ .Values.global.maintenance.enabled }}
+      banner:
+        {{- if .Values.global.maintenance.banner.message }}
+        message: {{ .Values.global.maintenance.banner.message | quote }}
+        {{- end }}
+        variant: {{ .Values.global.maintenance.banner.variant | quote }}
