@@ -66,7 +66,7 @@ These are useful as a starting point for customising deployments or building you
 
 ## Support & Documentation
 
-- Docs: [kannika.io/docs](https://kannika.io/docs)
+- Docs: [docs.kannika.io](https://docs.kannika.io/)
 - Community Slack: [join via kannika.io](https://kannika.io)
 - Email: [support@kannika.io](mailto:support@kannika.io)
 - Issues: [GitHub Issue Tracker](https://github.com/kannika-io/helm-charts/issues)
