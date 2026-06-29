@@ -288,3 +288,8 @@ data:
         message: {{ .Values.global.maintenance.banner.message | quote }}
         {{- end }}
         variant: {{ .Values.global.maintenance.banner.variant | quote }}
+
+    podReaper:
+      enabled: {{ .Values.config.podReaper.enabled }}
+      timeout: {{ .Values.config.podReaper.timeout | quote }}
+      interval: {{ .Values.config.podReaper.interval | quote }}
