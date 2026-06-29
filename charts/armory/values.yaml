@@ -85,7 +85,7 @@ api:
     pullPolicy: IfNotPresent
     repository: quay.io/kannika/kannika-api
     # Overrides the image tag whose default is the chart appVersion.
-    tag: "0.16.0"
+    tag: "0.17.0"
   imagePullSecrets: []
   nameOverride: ""
   nodeSelector: {}
@@ -213,7 +213,7 @@ console:
     pullPolicy: IfNotPresent
     repository: quay.io/kannika/kannika-console
     # Overrides the image tag whose default is the chart appVersion.
-    tag: "0.16.0"
+    tag: "0.17.0"
   imagePullSecrets: []
   nameOverride: ""
   nodeSelector: {}
@@ -326,7 +326,7 @@ operator:
     coreImage:
       pullPolicy: IfNotPresent
       repository: quay.io/kannika/kannika-core
-      tag: "0.16.0"
+      tag: "0.17.0"
     # Settings for the event gateway
     # The event gateway is used to ingest events from Kannika Armory components
     eventGateway:
@@ -396,6 +396,14 @@ operator:
       # Default tolerations for pods spawned by the operator
       # See https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
       tolerations: []
+    # Deletes backup and schema registry backup pods that get stuck in
+    # ContainerCreating past the timeout, so their controller can reschedule them.
+    podReaper:
+      enabled: true
+      # How often the operator scans for stuck pods.
+      interval: 1m
+      # How long a pod may stay stuck in ContainerCreating before it is reaped.
+      timeout: 5m
     restore:
       pod:
         # Default affinity for Restore pods
@@ -529,7 +537,7 @@ operator:
     schemaRegistryImage:
       pullPolicy: IfNotPresent
       repository: quay.io/kannika/kannika-registry-backup
-      tag: "0.16.0"
+      tag: "0.17.0"
     schemaRegistryRestore:
       pod:
         # Default affinity for SchemaRegistryRestore pods
@@ -606,7 +614,7 @@ operator:
     pullPolicy: IfNotPresent
     repository: quay.io/kannika/kannika-operator
     # Overrides the image tag whose default is the chart appVersion.
-    tag: "0.16.0"
+    tag: "0.17.0"
   imagePullSecrets: []
   nameOverride: ""
   nodeSelector: {}

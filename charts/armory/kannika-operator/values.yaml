@@ -2,7 +2,7 @@ image:
   repository: quay.io/kannika/kannika-operator
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "0.16.0"
+  tag: "0.17.0"
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
@@ -24,12 +24,20 @@ config:
   coreImage:
     repository: quay.io/kannika/kannika-core
     pullPolicy: IfNotPresent
-    tag: "0.16.0"
+    tag: "0.17.0"
   logging:
     # The format of the logs.
     # Can be "json" or "text".
     # If not set, the default format is used (json).
     format: "json"
+  # Deletes backup and schema registry backup pods that get stuck in
+  # ContainerCreating past the timeout, so their controller can reschedule them.
+  podReaper:
+    enabled: true
+    # How long a pod may stay stuck in ContainerCreating before it is reaped.
+    timeout: 5m
+    # How often the operator scans for stuck pods.
+    interval: 1m
   # Settings for the event gateway
   # The event gateway is used to ingest events from Kannika Armory components
   eventGateway:
@@ -232,7 +240,7 @@ config:
   schemaRegistryImage:
     repository: quay.io/kannika/kannika-registry-backup
     pullPolicy: IfNotPresent
-    tag: "0.16.0"
+    tag: "0.17.0"
   schemaRegistryBackup:
     pod:
       # Service account to use for each SchemaRegistryBackup pod
