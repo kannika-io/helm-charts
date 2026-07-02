@@ -66,6 +66,12 @@ data:
       pod:
       {{- toYaml $backupPodFields | nindent 8 }}
       {{- end }}
+      {{- if .Values.config.backup.monitoring.container.resources }}
+      monitoring:
+        container:
+          resources:
+            {{- toYaml .Values.config.backup.monitoring.container.resources | nindent 12 }}
+      {{- end }}
 
     restore:
       {{- if .Values.config.eventGateway.enabled }}
