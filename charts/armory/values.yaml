@@ -85,7 +85,7 @@ api:
     pullPolicy: IfNotPresent
     repository: quay.io/kannika/kannika-api
     # Overrides the image tag whose default is the chart appVersion.
-    tag: "0.17.0"
+    tag: "0.17.1"
   imagePullSecrets: []
   nameOverride: ""
   nodeSelector: {}
@@ -213,7 +213,7 @@ console:
     pullPolicy: IfNotPresent
     repository: quay.io/kannika/kannika-console
     # Overrides the image tag whose default is the chart appVersion.
-    tag: "0.17.0"
+    tag: "0.17.1"
   imagePullSecrets: []
   nameOverride: ""
   nodeSelector: {}
@@ -258,6 +258,18 @@ operator:
   # Application settings
   config:
     backup:
+      # Default settings for the Backup monitoring sidecar container (kannika-monitoring).
+      # Applied to every Backup's monitoring sidecar unless overridden per-Backup via spec.monitoring.resources.
+      monitoring:
+        container:
+          # Resources for the monitoring sidecar container.
+          resources: {}
+          #      requests:
+          #        memory: "64Mi"
+          #        cpu: "100m"
+          #      limits:
+          #        memory: "256Mi"
+          #        cpu: "500m"
       pod:
         # Default affinity for Backup pods
         # This takes precedence over the `.config.pod.affinity` setting.
@@ -326,7 +338,7 @@ operator:
     coreImage:
       pullPolicy: IfNotPresent
       repository: quay.io/kannika/kannika-core
-      tag: "0.17.0"
+      tag: "0.17.1"
     # Settings for the event gateway
     # The event gateway is used to ingest events from Kannika Armory components
     eventGateway:
@@ -537,7 +549,7 @@ operator:
     schemaRegistryImage:
       pullPolicy: IfNotPresent
       repository: quay.io/kannika/kannika-registry-backup
-      tag: "0.17.0"
+      tag: "0.17.1"
     schemaRegistryRestore:
       pod:
         # Default affinity for SchemaRegistryRestore pods
@@ -614,7 +626,7 @@ operator:
     pullPolicy: IfNotPresent
     repository: quay.io/kannika/kannika-operator
     # Overrides the image tag whose default is the chart appVersion.
-    tag: "0.17.0"
+    tag: "0.17.1"
   imagePullSecrets: []
   nameOverride: ""
   nodeSelector: {}

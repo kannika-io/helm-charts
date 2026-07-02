@@ -2,7 +2,7 @@ image:
   repository: quay.io/kannika/kannika-operator
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "0.17.0"
+  tag: "0.17.1"
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
@@ -24,7 +24,7 @@ config:
   coreImage:
     repository: quay.io/kannika/kannika-core
     pullPolicy: IfNotPresent
-    tag: "0.17.0"
+    tag: "0.17.1"
   logging:
     # The format of the logs.
     # Can be "json" or "text".
@@ -171,6 +171,18 @@ config:
         # Set the startup probe for the Backup pod
         # See https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
         startupProbe: {}
+    # Default settings for the Backup monitoring sidecar container (kannika-monitoring).
+    # Applied to every Backup's monitoring sidecar unless overridden per-Backup via spec.monitoring.resources.
+    monitoring:
+      container:
+        # Resources for the monitoring sidecar container.
+        resources: {}
+        #      requests:
+        #        memory: "64Mi"
+        #        cpu: "100m"
+        #      limits:
+        #        memory: "256Mi"
+        #        cpu: "500m"
   restore:
     pod:
       # Service account to use for each Restore pod
@@ -240,7 +252,7 @@ config:
   schemaRegistryImage:
     repository: quay.io/kannika/kannika-registry-backup
     pullPolicy: IfNotPresent
-    tag: "0.17.0"
+    tag: "0.17.1"
   schemaRegistryBackup:
     pod:
       # Service account to use for each SchemaRegistryBackup pod
