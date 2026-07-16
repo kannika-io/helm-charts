@@ -67,6 +67,12 @@ api:
       # Deprecated: use basicAuth.username and basicAuth.password instead.
       # Setting username here implies basicAuth.enabled=true for backwards compatibility.
       username: ""
+    tls:
+      customCaCertificates:
+        # Name of a Kubernetes Secret containing PEM-encoded CA certificates.
+        # When set, the API merges these certificates into the JVM's default truststore at startup.
+        # This is needed when the OIDC provider or other TLS endpoints use private/internal CAs.
+        secretName: ""
   configMaps: {}
   # The values below are used in the Kubernetes Service for the Event Gateway
   # The Event Gateway is a separate service of the API that is used to ingest events from other components
@@ -85,7 +91,7 @@ api:
     pullPolicy: IfNotPresent
     repository: quay.io/kannika/kannika-api
     # Overrides the image tag whose default is the chart appVersion.
-    tag: "0.17.2"
+    tag: "0.17.3"
   imagePullSecrets: []
   nameOverride: ""
   nodeSelector: {}
@@ -196,6 +202,11 @@ console:
         enabled: false
         # The endpoint to redirect to the OIDC provider for logout.
         logoutEndpoint: ""
+        # The redirect URI sent to the OIDC provider during login.
+        # If empty, the console uses the current origin (for example https://<host>).
+        # Set this when the provider requires a dedicated callback path,
+        # for example https://console.example.com/login/callback.
+        redirectUri: ""
         # The additional scopes to request when requesting an access token
         scope: ""
         # The token endpoint.
@@ -213,7 +224,7 @@ console:
     pullPolicy: IfNotPresent
     repository: quay.io/kannika/kannika-console
     # Overrides the image tag whose default is the chart appVersion.
-    tag: "0.17.2"
+    tag: "0.17.3"
   imagePullSecrets: []
   nameOverride: ""
   nodeSelector: {}
@@ -338,7 +349,7 @@ operator:
     coreImage:
       pullPolicy: IfNotPresent
       repository: quay.io/kannika/kannika-core
-      tag: "0.17.2"
+      tag: "0.17.3"
     # Settings for the event gateway
     # The event gateway is used to ingest events from Kannika Armory components
     eventGateway:
@@ -549,7 +560,7 @@ operator:
     schemaRegistryImage:
       pullPolicy: IfNotPresent
       repository: quay.io/kannika/kannika-registry-backup
-      tag: "0.17.2"
+      tag: "0.17.3"
     schemaRegistryRestore:
       pod:
         # Default affinity for SchemaRegistryRestore pods
@@ -626,7 +637,7 @@ operator:
     pullPolicy: IfNotPresent
     repository: quay.io/kannika/kannika-operator
     # Overrides the image tag whose default is the chart appVersion.
-    tag: "0.17.2"
+    tag: "0.17.3"
   imagePullSecrets: []
   nameOverride: ""
   nodeSelector: {}

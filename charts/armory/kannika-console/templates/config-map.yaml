@@ -15,6 +15,9 @@ data:
   {{- if .Values.config.security.oidc.clientId }}
   OIDC_CLIENT_ID: {{.Values.config.security.oidc.clientId | quote }}
   {{- end }}
+  {{- if .Values.config.security.oidc.redirectUri }}
+  OIDC_REDIRECT_URI: {{.Values.config.security.oidc.redirectUri | quote }}
+  {{- end }}
   {{- if .Values.config.security.oidc.audience }}
   OIDC_AUDIENCE: {{.Values.config.security.oidc.audience | quote }}
   {{- end }}

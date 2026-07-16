@@ -41,6 +41,11 @@ spec:
               name: tmp-volume
             - mountPath: {{ include "kannika-api.dataDirectory" .  }}
               name: kannika-data-volume
+            {{- if .Values.config.tls.customCaCertificates.secretName }}
+            - name: custom-ca-certificates
+              mountPath: /etc/kannika/ca-certificates
+              readOnly: true
+            {{- end }}
             {{- with .Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
@@ -81,6 +86,11 @@ spec:
         - name: tmp-volume
           emptyDir: {}
         {{- include "kannika-api.deploymentDataVolume" . | nindent 8 -}}
+        {{- if .Values.config.tls.customCaCertificates.secretName }}
+        - name: custom-ca-certificates
+          secret:
+            secretName: {{ .Values.config.tls.customCaCertificates.secretName }}
+        {{- end }}
         {{- with .Values.volumes }}
           {{- toYaml . | nindent 8 }}
         {{- end }}
