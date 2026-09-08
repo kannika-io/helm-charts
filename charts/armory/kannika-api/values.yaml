@@ -2,7 +2,7 @@ image:
   repository: quay.io/kannika/kannika-api
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "0.17.5"
+  tag: "0.18.0"
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
@@ -59,16 +59,24 @@ config:
     # This will be removed in 0.13. Use `global.kubernetes.namespace` instead.
     namespace: ""
   tls:
+    # Custom CA certificates to trust for outbound TLS connections.
+    # This is needed when the OIDC provider or other TLS endpoints use private/internal CAs.
+    # When set, the API merges every certificate found in the referenced resource
+    # into the JVM's default truststore at startup.
+    # The certificates must be PEM-encoded.
+    # Set either `configMapName` or `secretName`, not both.
     customCaCertificates:
+      # Name of a Kubernetes ConfigMap containing PEM-encoded CA certificates.
+      configMapName: ""
       # Name of a Kubernetes Secret containing PEM-encoded CA certificates.
-      # When set, the API merges these certificates into the JVM's default truststore at startup.
-      # This is needed when the OIDC provider or other TLS endpoints use private/internal CAs.
       secretName: ""
   security:
     enabled: true
     # Basic authentication configuration.
     basicAuth:
-      enabled: true
+      # Defaults to true, or to false when `oidc.issuerUri` is set.
+      # Set to true to allow both OIDC and basic authentication.
+      enabled: null
       username: ""
       password: ""
     # Deprecated: use basicAuth.username and basicAuth.password instead.

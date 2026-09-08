@@ -1800,11 +1800,13 @@ spec:
                           additionalProperties:
                             properties:
                               restoreFromOffset:
+                                description: First offset to restore, inclusive.
                                 format: int64
                                 minimum: 0.0
                                 nullable: true
                                 type: integer
                               restoreUntilOffset:
+                                description: Offset to restore until, exclusive.
                                 format: int64
                                 minimum: 0.0
                                 nullable: true
@@ -1995,11 +1997,13 @@ spec:
                                 format: int32
                                 type: integer
                               restoreFromOffset:
+                                description: First offset to restore, inclusive.
                                 format: int64
                                 minimum: 0.0
                                 nullable: true
                                 type: integer
                               restoreUntilOffset:
+                                description: Offset to restore until, exclusive.
                                 format: int64
                                 minimum: 0.0
                                 nullable: true
@@ -2931,7 +2935,7 @@ spec:
                     nullable: true
                     type: string
                   caCertificatePemFrom:
-                    description: Path to CA certificate, mapped to the `ssl.ca.pem` property
+                    description: The CA certificate in PEM format. Ignored when `caCertificateLocation` is set.
                     nullable: true
                     oneOf:
                     - required:
@@ -2955,7 +2959,7 @@ spec:
                         type: object
                     type: object
                   certificatePemFrom:
-                    description: The client's certificate, mapped to the `ssl.certificate.pem` property
+                    description: The client's certificate in PEM format
                     oneOf:
                     - required:
                       - secretKeyRef
@@ -3006,7 +3010,7 @@ spec:
                         type: object
                     type: object
                   privateKeyPemFrom:
-                    description: The client's private key, mapped to the `ssl.key.pem` property
+                    description: The client's private key in PEM format
                     oneOf:
                     - required:
                       - secretKeyRef
@@ -3149,7 +3153,7 @@ spec:
                         nullable: true
                         type: string
                       caCertificatePemFrom:
-                        description: Path to CA certificate, mapped to the `ssl.ca.pem` property.
+                        description: The CA certificate in PEM format. Ignored when `caCertificateLocation` is set.
                         nullable: true
                         oneOf:
                         - required:
@@ -3173,7 +3177,7 @@ spec:
                             type: object
                         type: object
                       certificatePemFrom:
-                        description: The client's certificate, mapped to the `ssl.certificate.pem` property.
+                        description: The client's certificate in PEM format.
                         nullable: true
                         oneOf:
                         - required:
@@ -3224,7 +3228,7 @@ spec:
                             type: object
                         type: object
                       privateKeyPemFrom:
-                        description: The client's private key, mapped to the `ssl.key.pem` property
+                        description: The client's private key in PEM format.
                         nullable: true
                         oneOf:
                         - required:
@@ -3328,7 +3332,7 @@ spec:
                         nullable: true
                         type: string
                       caCertificatePemFrom:
-                        description: Path to CA certificate, mapped to the `ssl.ca.pem` property.
+                        description: The CA certificate in PEM format. Ignored when `caCertificateLocation` is set.
                         nullable: true
                         oneOf:
                         - required:
@@ -3352,7 +3356,7 @@ spec:
                             type: object
                         type: object
                       certificatePemFrom:
-                        description: The client's certificate, mapped to the `ssl.certificate.pem` property.
+                        description: The client's certificate in PEM format.
                         nullable: true
                         oneOf:
                         - required:
@@ -3403,7 +3407,7 @@ spec:
                             type: object
                         type: object
                       privateKeyPemFrom:
-                        description: The client's private key, mapped to the `ssl.key.pem` property
+                        description: The client's private key in PEM format.
                         nullable: true
                         oneOf:
                         - required:

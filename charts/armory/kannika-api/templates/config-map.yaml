@@ -8,7 +8,7 @@ data:
   KANNIKA_K8S_NAMESPACE: {{ $ns | quote }}
   {{- end }}
   KANNIKA_DATA_DIRECTORY: {{ include "kannika-api.dataDirectory" . }}
-  {{- if .Values.config.tls.customCaCertificates.secretName }}
+  {{- if include "kannika-api.customCaCertificatesEnabled" . }}
   KANNIKA_TLS_CA_CERTIFICATES_PATH: "/etc/kannika/ca-certificates"
   {{- end }}
   KANNIKA_SECURITY_ENABLED: {{ .Values.config.security.enabled | quote }}

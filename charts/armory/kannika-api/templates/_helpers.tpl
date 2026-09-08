@@ -180,9 +180,45 @@ Minimum 0 and maximum 1.
   {{- toYaml $rules -}}
 {{- end -}}
 
+{{/*
+  Returns a non-empty string when custom CA certificates are configured,
+  either through a ConfigMap or through a Secret.
+  Fails when both are set, since they are mounted at the same path.
+*/}}
+{{- define "kannika-api.customCaCertificatesEnabled" -}}
+{{- $ca := .Values.config.tls.customCaCertificates -}}
+{{- if and $ca.configMapName $ca.secretName -}}
+  {{- fail "Set either `api.config.tls.customCaCertificates.configMapName` or `api.config.tls.customCaCertificates.secretName`, not both." -}}
+{{- end -}}
+{{- if or $ca.configMapName $ca.secretName -}}
+true
+{{- end -}}
+{{- end -}}
+
+{{/*
+  Renders the volume holding the custom CA certificates.
+  Only call this when `kannika-api.customCaCertificatesEnabled` is non-empty.
+*/}}
+{{- define "kannika-api.customCaCertificatesVolume" -}}
+{{- $ca := .Values.config.tls.customCaCertificates -}}
+- name: custom-ca-certificates
+{{- if $ca.configMapName }}
+  configMap:
+    name: {{ $ca.configMapName }}
+{{- else }}
+  secret:
+    secretName: {{ $ca.secretName }}
+{{- end }}
+{{- end -}}
+
 {{- define "kannika-api.basicAuthEnvVars" -}}
 {{- if .Values.config.security.enabled }}
-  {{- $basicAuthEnabled := or .Values.config.security.basicAuth.enabled (not (empty .Values.config.security.username)) -}}
+  {{- $oidcConfigured := not (empty .Values.config.security.oidc.issuerUri) -}}
+  {{- $basicAuthEnabled := not $oidcConfigured -}}
+  {{- if not (kindIs "invalid" .Values.config.security.basicAuth.enabled) -}}
+    {{- $basicAuthEnabled = .Values.config.security.basicAuth.enabled -}}
+  {{- end -}}
+  {{- $basicAuthEnabled = or $basicAuthEnabled (not (empty .Values.config.security.username)) -}}
   {{- $secretName := .Values.config.security.secret.name | default (include "kannika-api.name" $) -}}
   {{- $userKey := .Values.config.security.secret.usernameKey | default "username" -}}
   {{- $passKey := .Values.config.security.secret.passwordKey | default "password" -}}
