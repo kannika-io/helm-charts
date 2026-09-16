@@ -43,6 +43,21 @@ api:
       namespace: ""
       # The port of the Service to call
       port: 8080
+    restore:
+      metrics:
+        scrape:
+          # Periodic persistence of scraped pod metrics to the database.
+          # When enabled, the API periodically saves metrics collected by scrape workers to the database.
+          # This ensures the database has recent data to fall back on when the in-memory cache expires,
+          # preventing gaps in reported restore topic metrics after API restarts or cache evictions.
+          persist:
+            # Whether to enable periodic persistence of scraped metrics.
+            # When disabled, scraped metrics are only held in the in-memory cache and lost on restart.
+            enabled: true
+            # How often scraped metrics are persisted to the database.
+            # Lower values keep the database more up-to-date but increase write load.
+            # The first scrape after startup always persists immediately, regardless of this interval.
+            interval: "5m"
     security:
       # Basic authentication configuration.
       basicAuth:
@@ -99,7 +114,7 @@ api:
     pullPolicy: IfNotPresent
     repository: quay.io/kannika/kannika-api
     # Overrides the image tag whose default is the chart appVersion.
-    tag: "0.18.0"
+    tag: "0.18.1"
   imagePullSecrets: []
   nameOverride: ""
   nodeSelector: {}
@@ -232,7 +247,7 @@ console:
     pullPolicy: IfNotPresent
     repository: quay.io/kannika/kannika-console
     # Overrides the image tag whose default is the chart appVersion.
-    tag: "0.18.0"
+    tag: "0.18.1"
   imagePullSecrets: []
   nameOverride: ""
   nodeSelector: {}
@@ -357,7 +372,7 @@ operator:
     coreImage:
       pullPolicy: IfNotPresent
       repository: quay.io/kannika/kannika-core
-      tag: "0.18.0"
+      tag: "0.18.1"
     # Settings for the event gateway
     # The event gateway is used to ingest events from Kannika Armory components
     eventGateway:
@@ -568,7 +583,7 @@ operator:
     schemaRegistryImage:
       pullPolicy: IfNotPresent
       repository: quay.io/kannika/kannika-registry-backup
-      tag: "0.18.0"
+      tag: "0.18.1"
     schemaRegistryRestore:
       pod:
         # Default affinity for SchemaRegistryRestore pods
@@ -645,7 +660,7 @@ operator:
     pullPolicy: IfNotPresent
     repository: quay.io/kannika/kannika-operator
     # Overrides the image tag whose default is the chart appVersion.
-    tag: "0.18.0"
+    tag: "0.18.1"
   imagePullSecrets: []
   nameOverride: ""
   nodeSelector: {}
