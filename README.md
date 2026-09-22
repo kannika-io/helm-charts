@@ -11,6 +11,8 @@ Charts are published to the Quay.io registry under the Kannika namespace and are
 [Kannika.io](https://kannika.io) builds tools for Kafka operations, reliability, and management.
 Our products help platform and data engineering teams run Kafka at scale, covering cluster migrations, schema management, chaos testing, and consumer offset recovery.
 
+The Kannika.io Helm Charts are part of Kannika's [open source and source-available Kafka tools](https://www.kannika.io/kannika-guides/open-source-kafka-tools/)
+
 ---
 
 ## Available Charts
