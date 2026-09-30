@@ -2,7 +2,7 @@ image:
   repository: quay.io/kannika/kannika-operator
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "0.18.0"
+  tag: "0.19.0"
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
@@ -24,7 +24,7 @@ config:
   coreImage:
     repository: quay.io/kannika/kannika-core
     pullPolicy: IfNotPresent
-    tag: "0.18.0"
+    tag: "0.19.0"
   logging:
     # The format of the logs.
     # Can be "json" or "text".
@@ -76,6 +76,10 @@ config:
     # Default node selector for pods spawned by the operator
     # See https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
     nodeSelector: {}
+    # Time in seconds pods spawned by the operator get to shut down gracefully before they are forcibly killed
+    # If not set, the operator uses 60 seconds.
+    # See https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination
+    terminationGracePeriodSeconds: null
     # Default labels to add to pod metadata. Merged with existing labels; existing keys win.
     labels: {}
     # Default annotations to add to pod metadata. Merged with existing annotations; existing keys win.
@@ -138,6 +142,10 @@ config:
       # This takes precedence over the `.config.pod.nodeSelector` setting.
       # See https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
       nodeSelector: {}
+      # Time in seconds Backup pods get to shut down gracefully before they are forcibly killed
+      # This takes precedence over the `.config.pod.terminationGracePeriodSeconds` setting.
+      # See https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination
+      terminationGracePeriodSeconds: null
       # Default labels to add to Backup pod metadata. Takes precedence over `.config.pod.labels`.
       labels: {}
       # Default annotations to add to Backup pod metadata. Takes precedence over `.config.pod.annotations`.
@@ -214,6 +222,10 @@ config:
       # This takes precedence over the `.config.pod.nodeSelector` setting.
       # See https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
       nodeSelector: {}
+      # Time in seconds Restore pods get to shut down gracefully before they are forcibly killed
+      # This takes precedence over the `.config.pod.terminationGracePeriodSeconds` setting.
+      # See https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination
+      terminationGracePeriodSeconds: null
       # Default labels to add to Restore pod metadata. Takes precedence over `.config.pod.labels`.
       labels: {}
       # Default annotations to add to Restore pod metadata. Takes precedence over `.config.pod.annotations`.
@@ -252,7 +264,7 @@ config:
   schemaRegistryImage:
     repository: quay.io/kannika/kannika-registry-backup
     pullPolicy: IfNotPresent
-    tag: "0.18.0"
+    tag: "0.19.0"
   schemaRegistryBackup:
     pod:
       # Service account to use for each SchemaRegistryBackup pod
@@ -284,6 +296,10 @@ config:
       # This takes precedence over the `.config.pod.nodeSelector` setting.
       # See https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
       nodeSelector: {}
+      # Time in seconds SchemaRegistryBackup pods get to shut down gracefully before they are forcibly killed
+      # This takes precedence over the `.config.pod.terminationGracePeriodSeconds` setting.
+      # See https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination
+      terminationGracePeriodSeconds: null
       # Default labels to add to SchemaRegistryBackup pod metadata. Takes precedence over `.config.pod.labels`.
       labels: {}
       # Default annotations to add to SchemaRegistryBackup pod metadata. Takes precedence over `.config.pod.annotations`.
@@ -348,6 +364,10 @@ config:
       # This takes precedence over the `.config.pod.nodeSelector` setting.
       # See https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
       nodeSelector: {}
+      # Time in seconds SchemaRegistryRestore pods get to shut down gracefully before they are forcibly killed
+      # This takes precedence over the `.config.pod.terminationGracePeriodSeconds` setting.
+      # See https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination
+      terminationGracePeriodSeconds: null
       # Default labels to add to SchemaRegistryRestore pod metadata. Takes precedence over `.config.pod.labels`.
       labels: {}
       # Default annotations to add to SchemaRegistryRestore pod metadata. Takes precedence over `.config.pod.annotations`.

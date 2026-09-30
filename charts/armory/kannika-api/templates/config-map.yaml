@@ -37,3 +37,11 @@ data:
   KANNIKA_BACKUP_METRICS_SCRAPE_PERSIST_ENABLED: {{ .Values.config.backup.metrics.scrape.persist.enabled | quote }}
   KANNIKA_BACKUP_METRICS_SCRAPE_PERSIST_INTERVAL: {{ .Values.config.backup.metrics.scrape.persist.interval | quote }}
   KANNIKA_BACKUP_METRICS_SCRAPE_ON_STARTUP: {{ .Values.config.backup.metrics.scrape.onStartup | quote }}
+  KANNIKA_BACKUP_METRICS_CACHE_MAX_SIZE: {{ .Values.config.backup.metrics.cache.maxSize | quote }}
+  KANNIKA_BACKUP_METRICS_STARTING_GRACE: {{ .Values.config.backup.metrics.startingGrace | quote }}
+  KANNIKA_BACKUP_CACHE_MAXSIZE: {{ .Values.config.backup.cache.maxSize | quote }}
+  KANNIKA_BACKUP_CACHE_REFRESHAFTERWRITE: {{ .Values.config.backup.cache.refreshAfterWrite | quote }}
+  KANNIKA_RESTORE_METRICS_SCRAPE_PERSIST_ENABLED: {{ .Values.config.restore.metrics.scrape.persist.enabled | quote }}
+  KANNIKA_RESTORE_METRICS_SCRAPE_PERSIST_INTERVAL: {{ .Values.config.restore.metrics.scrape.persist.interval | quote }}
+  KANNIKA_RESTORE_METRICS_CACHE_MAX_SIZE: {{ .Values.config.restore.metrics.cache.maxSize | quote }}
+  KANNIKA_EVENTHUBS_TOPIC_CACHE_REFRESHAFTERWRITE: {{ .Values.config.eventhubs.topic.cache.refreshAfterWrite | quote }}

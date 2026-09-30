@@ -7,7 +7,17 @@ api:
   # Application settings
   config:
     backup:
+      cache:
+        # Maximum number of backups kept in the in-memory backup cache.
+        # The cache resolves a backup from events the backup pods push, without a Kubernetes lookup per event.
+        maxSize: 100
+        # How long a cached backup is used before it is reloaded from Kubernetes in the background.
+        refreshAfterWrite: "5s"
       metrics:
+        cache:
+          # Maximum number of backups the in-memory metrics cache holds.
+          # When the cache is full, the least-recently-used backup's metrics are evicted.
+          maxSize: 1000
         scrape:
           # Whether to start scrape workers for all discovered backup pods on API startup.
           # When enabled, the API proactively scrapes metrics from all running backup pods
@@ -26,10 +36,20 @@ api:
             # Lower values keep the database more up-to-date but increase write load.
             # The first scrape after startup always persists immediately, regardless of this interval.
             interval: "5m"
+        # How long after a backup pod started its topics are reported as starting
+        # while the pod has not reported them yet, instead of their last known status.
+        # Large backups can take a while before every topic is registered by the worker.
+        startingGrace: "60s"
     data:
       # Directory where the API server stores cached data
       # Defaults to /var/lib/kannika
       directory: "/var/lib/kannika"
+    eventhubs:
+      topic:
+        cache:
+          # How long listed event hub topics are served before they are refreshed.
+          # A read after this interval returns the cached topics and refreshes them in the background.
+          refreshAfterWrite: "60m"
     kubernetes:
       # This will be removed in 0.13. Use `global.kubernetes.namespace` instead.
       namespace: ""
@@ -43,6 +63,25 @@ api:
       namespace: ""
       # The port of the Service to call
       port: 8080
+    restore:
+      metrics:
+        cache:
+          # Maximum number of restores the in-memory metrics cache holds.
+          # When the cache is full, the least-recently-used restore's metrics are evicted.
+          maxSize: 1000
+        scrape:
+          # Periodic persistence of scraped pod metrics to the database.
+          # When enabled, the API periodically saves metrics collected by scrape workers to the database.
+          # This ensures the database has recent data to fall back on when the in-memory cache expires,
+          # preventing gaps in reported restore topic metrics after API restarts or cache evictions.
+          persist:
+            # Whether to enable periodic persistence of scraped metrics.
+            # When disabled, scraped metrics are only held in the in-memory cache and lost on restart.
+            enabled: true
+            # How often scraped metrics are persisted to the database.
+            # Lower values keep the database more up-to-date but increase write load.
+            # The first scrape after startup always persists immediately, regardless of this interval.
+            interval: "5m"
     security:
       # Basic authentication configuration.
       basicAuth:
@@ -99,7 +138,7 @@ api:
     pullPolicy: IfNotPresent
     repository: quay.io/kannika/kannika-api
     # Overrides the image tag whose default is the chart appVersion.
-    tag: "0.18.0"
+    tag: "0.19.0"
   imagePullSecrets: []
   nameOverride: ""
   nodeSelector: {}
@@ -232,7 +271,7 @@ console:
     pullPolicy: IfNotPresent
     repository: quay.io/kannika/kannika-console
     # Overrides the image tag whose default is the chart appVersion.
-    tag: "0.18.0"
+    tag: "0.19.0"
   imagePullSecrets: []
   nameOverride: ""
   nodeSelector: {}
@@ -348,6 +387,10 @@ operator:
         # Service account to use for each Backup pod
         # This takes precedence over the `.pod.serviceAccountName` setting.
         serviceAccountName: ""
+        # Time in seconds Backup pods get to shut down gracefully before they are forcibly killed
+        # This takes precedence over the `.config.pod.terminationGracePeriodSeconds` setting.
+        # See https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination
+        terminationGracePeriodSeconds: null
         # Default tolerations for Backup pods
         # This takes precedence over the `.config.pod.tolerations` setting.
         # See https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
@@ -357,7 +400,7 @@ operator:
     coreImage:
       pullPolicy: IfNotPresent
       repository: quay.io/kannika/kannika-core
-      tag: "0.18.0"
+      tag: "0.19.0"
     # Settings for the event gateway
     # The event gateway is used to ingest events from Kannika Armory components
     eventGateway:
@@ -424,6 +467,10 @@ operator:
       securityContext: {}
       # Service account to use for each pod spawned by the operator
       serviceAccountName: ""
+      # Time in seconds pods spawned by the operator get to shut down gracefully before they are forcibly killed
+      # If not set, the operator uses 60 seconds.
+      # See https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination
+      terminationGracePeriodSeconds: null
       # Default tolerations for pods spawned by the operator
       # See https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
       tolerations: []
@@ -495,6 +542,10 @@ operator:
         # Service account to use for each Restore pod
         # This takes precedence over the `.pod.serviceAccountName` setting.
         serviceAccountName: ""
+        # Time in seconds Restore pods get to shut down gracefully before they are forcibly killed
+        # This takes precedence over the `.config.pod.terminationGracePeriodSeconds` setting.
+        # See https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination
+        terminationGracePeriodSeconds: null
         # Default tolerations for Restore pods
         # This takes precedence over the `.config.pod.tolerations` setting.
         # See https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
@@ -559,6 +610,10 @@ operator:
         # Service account to use for each SchemaRegistryBackup pod
         # This takes precedence over the `.pod.serviceAccountName` setting.
         serviceAccountName: ""
+        # Time in seconds SchemaRegistryBackup pods get to shut down gracefully before they are forcibly killed
+        # This takes precedence over the `.config.pod.terminationGracePeriodSeconds` setting.
+        # See https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination
+        terminationGracePeriodSeconds: null
         # Default tolerations for SchemaRegistryBackup pods
         # This takes precedence over the `.config.pod.tolerations` setting.
         # See https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
@@ -568,7 +623,7 @@ operator:
     schemaRegistryImage:
       pullPolicy: IfNotPresent
       repository: quay.io/kannika/kannika-registry-backup
-      tag: "0.18.0"
+      tag: "0.19.0"
     schemaRegistryRestore:
       pod:
         # Default affinity for SchemaRegistryRestore pods
@@ -629,6 +684,10 @@ operator:
         # Service account to use for each SchemaRegistryRestore pod
         # This takes precedence over the `.pod.serviceAccountName` setting.
         serviceAccountName: ""
+        # Time in seconds SchemaRegistryRestore pods get to shut down gracefully before they are forcibly killed
+        # This takes precedence over the `.config.pod.terminationGracePeriodSeconds` setting.
+        # See https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination
+        terminationGracePeriodSeconds: null
         # Default tolerations for SchemaRegistryRestore pods
         # This takes precedence over the `.config.pod.tolerations` setting.
         # See https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
@@ -645,7 +704,7 @@ operator:
     pullPolicy: IfNotPresent
     repository: quay.io/kannika/kannika-operator
     # Overrides the image tag whose default is the chart appVersion.
-    tag: "0.18.0"
+    tag: "0.19.0"
   imagePullSecrets: []
   nameOverride: ""
   nodeSelector: {}
