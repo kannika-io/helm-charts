@@ -2,7 +2,7 @@ image:
   repository: quay.io/kannika/kannika-api
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "0.18.0"
+  tag: "0.19.0"
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
@@ -126,6 +126,45 @@ config:
         # immediately after starting, so the cache is warm before the first query arrives.
         # When disabled, scrape workers only start when a metrics query triggers a cache miss.
         onStartup: true
+      cache:
+        # Maximum number of backups the in-memory metrics cache holds.
+        # When the cache is full, the least-recently-used backup's metrics are evicted.
+        maxSize: 1000
+      # How long after a backup pod started its topics are reported as starting
+      # while the pod has not reported them yet, instead of their last known status.
+      # Large backups can take a while before every topic is registered by the worker.
+      startingGrace: "60s"
+    cache:
+      # Maximum number of backups kept in the in-memory backup cache.
+      # The cache resolves a backup from events the backup pods push, without a Kubernetes lookup per event.
+      maxSize: 100
+      # How long a cached backup is used before it is reloaded from Kubernetes in the background.
+      refreshAfterWrite: "5s"
+  restore:
+    metrics:
+      scrape:
+        # Periodic persistence of scraped pod metrics to the database.
+        # When enabled, the API periodically saves metrics collected by scrape workers to the database.
+        # This ensures the database has recent data to fall back on when the in-memory cache expires,
+        # preventing gaps in reported restore topic metrics after API restarts or cache evictions.
+        persist:
+          # Whether to enable periodic persistence of scraped metrics.
+          # When disabled, scraped metrics are only held in the in-memory cache and lost on restart.
+          enabled: true
+          # How often scraped metrics are persisted to the database.
+          # Lower values keep the database more up-to-date but increase write load.
+          # The first scrape after startup always persists immediately, regardless of this interval.
+          interval: "5m"
+      cache:
+        # Maximum number of restores the in-memory metrics cache holds.
+        # When the cache is full, the least-recently-used restore's metrics are evicted.
+        maxSize: 1000
+  eventhubs:
+    topic:
+      cache:
+        # How long listed event hub topics are served before they are refreshed.
+        # A read after this interval returns the cached topics and refreshes them in the background.
+        refreshAfterWrite: "60m"
   data:
     # Directory where the API server stores cached data
     # Defaults to /var/lib/kannika
