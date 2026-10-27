@@ -957,6 +957,7 @@ spec:
                     description: |-
                       Duration after which a kannika segment is rolled over if it has not yet
                       reached the maximum segment size.
+                      Defaults to 3600 seconds.
                     format: int64
                     nullable: true
                     type: integer
